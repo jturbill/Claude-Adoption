@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="bingbot" content="noindex, nofollow">
+<meta http-equiv="X-Robots-Tag" content="noindex, nofollow">
+<title>Claude Adoption Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --edelman-blue: #0E75FF;
+  --dark-navy: #04004E;
+  --text-light: #808080;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Login Screen */
+#login-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #04004E 0%, #003072 60%, #297980 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#login-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.login-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 3rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.lock-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.login-card h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  color: var(--dark-navy);
+  margin-bottom: 0.5rem;
+}
+
+.login-card .subtitle {
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+.password-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 2px solid #E0E0E0;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: var(--edelman-blue);
+  box-shadow: 0 0 0 3px rgba(14, 117, 255, 0.1);
+}
+
+.signin-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--edelman-blue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.signin-btn:hover {
+  background: #0056CC;
+}
+
+.signin-btn:active {
+  transform: scale(0.98);
+}
+
+.error-message {
+  color: #C62828;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
+
+/* Dashboard Container */
+#dashboard-container {
+  display: none;
+  position: relative;
+}
+
+#dashboard-container.visible {
+  display: block;
+}
+
+/* Sign Out Button */
+.signout-btn {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--edelman-blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  z-index: 1000;
+  transition: background 0.2s;
+  display: none;
+}
+
+#dashboard-container.visible ~ .signout-btn {
+  display: block;
+}
+
+.signout-btn:hover {
+  background: #0056CC;
+}
+
+.signout-btn:active {
+  transform: scale(0.95);
+}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="lock-icon">🔒</div>
+    <h1>Claude Adoption Dashboard</h1>
+    <p class="subtitle">Enter password to continue</p>
+    <input
+      type="password"
+      id="password-input"
+      class="password-input"
+      placeholder="Password"
+      autocomplete="off"
+    >
+    <button class="signin-btn" onclick="authenticate()">Sign In</button>
+    <div id="error-msg" class="error-message">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- Sign Out Button -->
+<button class="signout-btn" onclick="signOut()">Sign Out</button>
+
+<!-- Dashboard Container (hidden until authenticated) -->
+<div id="dashboard-container">
+  <!-- DASHBOARD CONTENT STARTS HERE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Adoption Super Dashboard — Week of 30 Mar 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=Glegoo:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --edelman-blue: #0E75FF;
+  --dark-navy: #04004E;
+  --deep-blue: #003072;
+  --teal: #297980;
+  --text-primary: #0D0D0D;
+  --text-dark: #333333;
+  --text-medium: #555555;
+  --text-light: #808080;
+  --text-muted: #9A9B9C;
+  --bg-light: #F7F7F7;
+  --bg-lighter: #F4F4F4;
+  --bg-white: #FFFFFF;
+  --border: #E0E0E0;
+  --border-light: #EEEEEE;
+  --shadow: rgba(0,0,0,0.06);
+  --shadow-hover: rgba(0,0,0,0.12);
+  --green: #2E7D32;
+  --red: #C62828;
+  --amber: #F57F17;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--bg-light); color:var(--text-primary); line-height:1.6; }
+.container { max-width:1200px; margin:0 auto; padding:0 2rem; }
+
+/* Hero */
+.hero { background:linear-gradient(135deg,#04004E 0%,#003072 60%,#297980 100%); color:#fff; padding:3rem 0 2rem; position:relative; overflow:hidden; }
+.hero::after { content:''; position:absolute; top:-50%; right:-20%; width:600px; height:600px; background:radial-gradient(circle,rgba(14,117,255,0.15) 0%,transparent 70%); border-radius:50%; }
+.hero h1 { font-family:'DM Serif Display',serif; font-size:2.8rem; line-height:1.2; margin-bottom:0.5rem; position:relative; z-index:1; }
+.hero .subtitle { font-size:1.1rem; color:rgba(255,255,255,0.75); font-weight:300; position:relative; z-index:1; }
+.hero .date-badge { display:inline-block; background:rgba(14,117,255,0.3); border:1px solid rgba(14,117,255,0.5); border-radius:20px; padding:0.3rem 1rem; font-size:0.85rem; color:#fff; margin-top:0.75rem; position:relative; z-index:1; }
+
+/* Tabs */
+.tab-nav { background:#fff; border-bottom:2px solid var(--border-light); position:sticky; top:0; z-index:100; box-shadow:0 2px 8px var(--shadow); }
+.tab-nav .container { display:flex; gap:0; overflow-x:auto; }
+.tab-btn { padding:1rem 1.25rem; font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:500; color:var(--text-medium); background:none; border:none; cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; white-space:nowrap; }
+.tab-btn:hover { color:var(--text-dark); }
+.tab-btn.active { color:var(--edelman-blue); border-bottom-color:var(--edelman-blue); font-weight:600; }
+.tab-content { display:none; padding:2rem 0 3rem; }
+.tab-content.active { display:block; }
+
+/* Cards */
+.card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.5rem; transition:box-shadow 0.2s; }
+.card:hover { box-shadow:0 4px 20px var(--shadow-hover); }
+.card-title { font-family:'DM Serif Display',serif; font-size:1.25rem; color:var(--dark-navy); margin-bottom:1rem; }
+.section-title { font-family:'DM Serif Display',serif; font-size:1.75rem; color:var(--dark-navy); margin-bottom:1.5rem; }
+
+/* KPI Cards */
+.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-bottom:2rem; }
+.kpi-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.25rem; border-left:4px solid var(--edelman-blue); text-align:center; }
+.kpi-card:nth-child(2) { border-left-color:var(--dark-navy); }
+.kpi-card:nth-child(3) { border-left-color:var(--teal); }
+.kpi-card:nth-child(4) { border-left-color:var(--deep-blue); }
+.kpi-card:nth-child(5) { border-left-color:var(--green); }
+.kpi-value { font-family:'Glegoo',serif; font-weight:700; font-size:2.2rem; color:var(--dark-navy); line-height:1.2; }
+.kpi-label { font-size:0.8rem; color:var(--text-medium); margin-top:0.25rem; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; }
+.kpi-trend { font-size:0.75rem; margin-top:0.25rem; font-weight:600; }
+.kpi-trend.up { color:var(--green); }
+.kpi-trend.down { color:var(--red); }
+
+/* Grids */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+.grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+.full-width { margin-bottom:1.5rem; }
+
+/* Gauges */
+.gauge-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:2rem; }
+.gauge-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.5rem; text-align:center; }
+.gauge-label { font-size:0.85rem; font-weight:600; color:var(--text-medium); margin-top:0.75rem; text-transform:uppercase; letter-spacing:0.5px; }
+.gauge-score { font-family:'Glegoo',serif; font-weight:700; font-size:1.1rem; color:var(--dark-navy); }
+
+/* Heatmap */
+.heatmap { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:1.5rem; }
+.heatmap-cell { aspect-ratio:1; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600; color:#fff; }
+.heatmap-label { font-size:0.7rem; color:var(--text-muted); text-align:center; font-weight:500; }
+
+/* Progress bars */
+.progress-row { margin-bottom:1rem; }
+.progress-label { display:flex; justify-content:space-between; margin-bottom:0.4rem; font-size:0.85rem; }
+.progress-name { font-weight:500; color:var(--text-dark); }
+.progress-val { font-family:'Glegoo',serif; font-weight:700; color:var(--dark-navy); }
+.progress-bar { height:10px; background:var(--bg-lighter); border-radius:5px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:5px; transition:width 1s ease; }
+
+/* Thermometer */
+.thermo-row { display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; }
+.thermo-label { width:140px; font-size:0.8rem; font-weight:500; color:var(--text-dark); text-align:right; flex-shrink:0; }
+.thermo-track { flex:1; height:24px; background:var(--bg-lighter); border-radius:12px; overflow:hidden; position:relative; }
+.thermo-fill { height:100%; border-radius:12px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.7rem; font-weight:700; color:#fff; transition:width 1s ease; }
+
+/* Skill cards */
+.skill-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+.skill-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.25rem; border-top:3px solid var(--edelman-blue); cursor:pointer; transition:all 0.2s; }
+.skill-card:hover { box-shadow:0 4px 20px var(--shadow-hover); transform:translateY(-2px); }
+.skill-card .skill-name { font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--dark-navy); }
+.skill-card .skill-cat { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--edelman-blue); font-weight:600; margin-top:0.25rem; }
+.skill-card .skill-desc { font-size:0.8rem; color:var(--text-medium); margin-top:0.5rem; max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
+.skill-card.open .skill-desc { max-height:200px; }
+
+/* Accordion */
+.accordion { margin-bottom:0.75rem; border-radius:8px; overflow:hidden; box-shadow:0 1px 4px var(--shadow); }
+.accordion-header { padding:1rem 1.25rem; background:var(--bg-light); cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:500; font-size:0.9rem; }
+.accordion-header:hover { background:var(--bg-lighter); }
+.accordion-chevron { transition:transform 0.3s; font-size:0.8rem; color:var(--text-muted); }
+.accordion.open .accordion-chevron { transform:rotate(180deg); }
+.accordion.open .accordion-header { border-left:3px solid var(--edelman-blue); }
+.accordion-body { max-height:0; overflow:hidden; transition:max-height 0.3s ease; background:#fff; }
+.accordion.open .accordion-body { max-height:500px; }
+.accordion-body-inner { padding:1rem 1.25rem; font-size:0.85rem; color:var(--text-medium); }
+
+/* Tags */
+.tag { display:inline-block; padding:0.2rem 0.6rem; border-radius:12px; font-size:0.7rem; font-weight:600; margin:0.15rem; }
+.tag-geo { background:rgba(14,117,255,0.1); color:var(--edelman-blue); }
+.tag-linkedin { background:rgba(4,0,78,0.08); color:var(--dark-navy); }
+.tag-reddit { background:rgba(41,121,128,0.1); color:var(--teal); }
+.tag-social { background:rgba(0,48,114,0.08); color:var(--deep-blue); }
+.tag-substack { background:rgba(245,127,23,0.1); color:var(--amber); }
+.tag-strategy { background:rgba(46,125,50,0.1); color:var(--green); }
+.tag-slides { background:rgba(85,85,85,0.1); color:var(--text-medium); }
+.tag-dashboard { background:rgba(14,117,255,0.1); color:var(--edelman-blue); }
+.tag-skills { background:rgba(41,121,128,0.1); color:var(--teal); }
+.tag-media { background:rgba(0,48,114,0.08); color:var(--deep-blue); }
+
+/* Recommendation cards */
+.rec-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.25rem; position:relative; overflow:hidden; }
+.rec-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; }
+.rec-card.high::before { background:var(--edelman-blue); }
+.rec-card.medium::before { background:var(--teal); }
+.rec-card.quick::before { background:var(--green); }
+.rec-priority { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:0.25rem; }
+.rec-card.high .rec-priority { color:var(--edelman-blue); }
+.rec-card.medium .rec-priority { color:var(--teal); }
+.rec-card.quick .rec-priority { color:var(--green); }
+.rec-title { font-family:'DM Serif Display',serif; font-size:1.05rem; color:var(--dark-navy); margin-bottom:0.5rem; }
+.rec-desc { font-size:0.8rem; color:var(--text-medium); }
+
+/* Scatter plot */
+.scatter-grid { position:relative; width:100%; height:350px; background:var(--bg-lighter); border-radius:8px; border-left:2px solid var(--border); border-bottom:2px solid var(--border); }
+.scatter-dot { position:absolute; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:700; color:#fff; cursor:pointer; transition:transform 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
+.scatter-dot:hover { transform:scale(1.2); z-index:10; }
+.scatter-label { position:absolute; font-size:0.7rem; color:var(--text-muted); }
+
+/* Giant ring */
+.giant-ring-wrap { display:flex; align-items:center; justify-content:center; padding:2rem 0; }
+
+/* Responsive */
+@media(max-width:768px){
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .grid-2,.grid-3,.grid-4,.gauge-grid,.skill-grid { grid-template-columns:1fr; }
+  .hero h1 { font-size:2rem; }
+  .tab-btn { padding:0.75rem 0.8rem; font-size:0.75rem; }
+  .thermo-label { width:80px; font-size:0.7rem; }
+}
+
+/* Score ring animations */
+@keyframes ringFill { from { stroke-dashoffset:565; } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.animate-in { animation:fadeUp 0.5s ease forwards; }
+
+/* DNA Radar placeholder */
+.mini-stat { text-align:center; padding:1rem; }
+.mini-stat .val { font-family:'Glegoo',serif; font-weight:700; font-size:1.8rem; color:var(--dark-navy); }
+.mini-stat .lbl { font-size:0.75rem; color:var(--text-medium); text-transform:uppercase; letter-spacing:0.5px; }
+</style>
+</head>
+<body style="display:contents;">
+
+<!-- HERO -->
+<section class="hero">
+<div class="container">
+  <h1>Claude Adoption Super Dashboard</h1>
+  <p class="subtitle">Josh Turbill — Edelman Technology Practice</p>
+  <span class="date-badge">Week of 30 March 2026</span>
+</div>
+</section>
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+<div class="container">
+  <button class="tab-btn active" onclick="switchTab('command')">Command Centre</button>
+  <button class="tab-btn" onclick="switchTab('tokens')">Token Intelligence</button>
+  <button class="tab-btn" onclick="switchTab('skills')">Skill Armoury</button>
+  <button class="tab-btn" onclick="switchTab('usage')">Usage Deep-Dive</button>
+  <button class="tab-btn" onclick="switchTab('themes')">Themes &amp; Patterns</button>
+  <button class="tab-btn" onclick="switchTab('scorecard')">Adoption Scorecard</button>
+  <button class="tab-btn" onclick="switchTab('recs')">Recommendations</button>
+</div>
+</nav>
+
+<!-- ========== TAB 1: COMMAND CENTRE ========== -->
+<div id="tab-command" class="tab-content active">
+<div class="container">
+  <h2 class="section-title">Command Centre</h2>
+
+  <!-- KPI Row -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">98</div>
+      <div class="kpi-label">Total Sessions</div>
+      <div class="kpi-trend up">&#9650; Active growth</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">12</div>
+      <div class="kpi-label">Custom Skills</div>
+      <div class="kpi-trend up">&#9650; Fully built</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">2.94M</div>
+      <div class="kpi-label">Est. Total Tokens</div>
+      <div class="kpi-trend up">~30K avg/session</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">91</div>
+      <div class="kpi-label">Adoption Score</div>
+      <div class="kpi-trend up">&#9650; Power user</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">5</div>
+      <div class="kpi-label">Use Categories</div>
+      <div class="kpi-trend up">Full spectrum</div>
+    </div>
+  </div>
+
+  <!-- Gauges -->
+  <div class="gauge-grid">
+    <div class="gauge-card">
+      <svg width="120" height="70" viewBox="0 0 120 70">
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#EEEEEE" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#0E75FF" stroke-width="8" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="8"/>
+      </svg>
+      <div class="gauge-score">95/100</div>
+      <div class="gauge-label">Volume</div>
+    </div>
+    <div class="gauge-card">
+      <svg width="120" height="70" viewBox="0 0 120 70">
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#EEEEEE" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#04004E" stroke-width="8" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="3"/>
+      </svg>
+      <div class="gauge-score">98/100</div>
+      <div class="gauge-label">Customisation</div>
+    </div>
+    <div class="gauge-card">
+      <svg width="120" height="70" viewBox="0 0 120 70">
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#EEEEEE" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#297980" stroke-width="8" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="16"/>
+      </svg>
+      <div class="gauge-score">90/100</div>
+      <div class="gauge-label">Output Quality</div>
+    </div>
+    <div class="gauge-card">
+      <svg width="120" height="70" viewBox="0 0 120 70">
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#EEEEEE" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#003072" stroke-width="8" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="19"/>
+      </svg>
+      <div class="gauge-score">88/100</div>
+      <div class="gauge-label">Workflow</div>
+    </div>
+  </div>
+
+  <!-- Activity Heatmap & Doughnut -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Activity Heatmap (Last 7 Days)</div>
+      <div class="heatmap" id="heatmap"></div>
+      <div class="heatmap" style="margin-top:-4px;">
+        <div class="heatmap-label">Mon</div><div class="heatmap-label">Tue</div><div class="heatmap-label">Wed</div><div class="heatmap-label">Thu</div><div class="heatmap-label">Fri</div><div class="heatmap-label">Sat</div><div class="heatmap-label">Sun</div>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Intensity = estimated sessions per day based on session titles with dates</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Session Split by Category</div>
+      <canvas id="doughnutChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Radar & Bar -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Capability Radar</div>
+      <canvas id="radarChart" height="260"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Channel / Platform Usage</div>
+      <canvas id="channelBar" height="260"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 2: TOKEN INTELLIGENCE ========== -->
+<div id="tab-tokens" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Token Intelligence</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Token Efficiency Curve</div>
+      <canvas id="tokenEfficiency" height="280"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Token Distribution by Session</div>
+      <canvas id="tokenDistribution" height="280"></canvas>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div class="card-title">Token Usage Heat Map</div>
+    <canvas id="tokenHeatmap" height="300"></canvas>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Avg Tokens/Session</div>
+      <div style="font-size:3rem;font-family:'Glegoo',serif;font-weight:700;color:var(--edelman-blue);text-align:center;">30K</div>
+      <p style="text-align:center;font-size:0.8rem;color:var(--text-medium);margin-top:0.5rem;">Consistent mid-range usage</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Peak Session</div>
+      <div style="font-size:3rem;font-family:'Glegoo',serif;font-weight:700;color:var(--dark-navy);text-align:center;">287K</div>
+      <p style="text-align:center;font-size:0.8rem;color:var(--text-medium);margin-top:0.5rem;">Multi-turn deep analysis</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Est. Cost</div>
+      <div style="font-size:3rem;font-family:'Glegoo',serif;font-weight:700;color:var(--teal);text-align:center;">$58</div>
+      <p style="text-align:center;font-size:0.8rem;color:var(--text-medium);margin-top:0.5rem;">Baseline (cached 20%)</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 3: SKILL ARMOURY ========== -->
+<div id="tab-skills" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Skill Armoury</h2>
+  <p style="color:var(--text-medium);margin-bottom:2rem;">Custom skills and frameworks built</p>
+
+  <div class="skill-grid">
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-dashboard">DASHBOARD</span>
+      <div class="skill-name">Adoption Dashboard</div>
+      <div class="skill-cat">Data Visualization</div>
+      <div class="skill-desc">Interactive HTML dashboard with 7 tabs, real-time charts, KPI tracking, and adoption metrics visualization. Built with Chart.js.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-strategy">STRATEGY</span>
+      <div class="skill-name">DNA Radar Framework</div>
+      <div class="skill-cat">Strategy/Analysis</div>
+      <div class="skill-desc">5-dimension capability scoring system: Depth, Novelty, Automation, Reach, Adoption. Used for portfolio-wide assessment.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-skills">SKILLS</span>
+      <div class="skill-name">Skill Taxonomy</div>
+      <div class="skill-cat">Classification</div>
+      <div class="skill-desc">Comprehensive categorization of 12 unique custom skills across strategy, communication, creative, technical, and analysis domains.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-geo">GEO</span>
+      <div class="skill-name">EMEA Market Maps</div>
+      <div class="skill-cat">Market Research</div>
+      <div class="skill-desc">Geographic analysis templates for European, Middle Eastern, and African market segmentation with competitive positioning.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-media">MEDIA</span>
+      <div class="skill-name">Media Content Generator</div>
+      <div class="skill-cat">Content Creation</div>
+      <div class="skill-desc">Templates for generating LinkedIn thought pieces, Substack articles, Reddit discussions, and social media content at scale.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-slides">SLIDES</span>
+      <div class="skill-name">Presentation Builder</div>
+      <div class="skill-cat">Communication</div>
+      <div class="skill-desc">Multi-format presentation creation from outlines: board decks, pitch decks, workshop slides, and narrative presentations.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-strategy">STRATEGY</span>
+      <div class="skill-name">Use Case Library</div>
+      <div class="skill-cat">Strategy/Analysis</div>
+      <div class="skill-desc">Repository of 30+ vetted Claude use cases with implementation guidance, ROI projections, and success metrics.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-linkedin">LINKEDIN</span>
+      <div class="skill-name">LinkedIn Strategy Hub</div>
+      <div class="skill-cat">Social Strategy</div>
+      <div class="skill-desc">Content calendar planning, engagement analytics, follower growth tracking, and thought leadership positioning for B2B.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-reddit">REDDIT</span>
+      <div class="skill-name">Reddit Community Manager</div>
+      <div class="skill-cat">Social Intelligence</div>
+      <div class="skill-desc">Subreddit monitoring, comment analysis, brand sentiment tracking, and community growth strategies.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-substack">SUBSTACK</span>
+      <div class="skill-name">Newsletter Optimizer</div>
+      <div class="skill-cat">Content Strategy</div>
+      <div class="skill-desc">Email content generation, audience segmentation, growth strategies, and performance analytics for newsletter platforms.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-social">SOCIAL</span>
+      <div class="skill-name">Social Listening Suite</div>
+      <div class="skill-cat">Intelligence</div>
+      <div class="skill-desc">Real-time brand mention tracking, competitor intelligence, sentiment analysis, and trend identification across platforms.</div>
+    </div>
+    <div class="skill-card" onclick="toggleSkill(this)">
+      <span class="tag tag-strategy">STRATEGY</span>
+      <div class="skill-name">Adoption Scorecard</div>
+      <div class="skill-cat">Measurement</div>
+      <div class="skill-desc">Quantified adoption scoring across volume, customization, output quality, workflow impact, and strategic alignment.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 4: USAGE DEEP-DIVE ========== -->
+<div id="tab-usage" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Usage Deep-Dive</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Sessions Over Time</div>
+      <canvas id="sessionsTimeline" height="260"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Session Duration Distribution</div>
+      <canvas id="durationDist" height="260"></canvas>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div class="card-title">Activity by Use Case</div>
+    <canvas id="useCaseBar" height="280"></canvas>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Breakdown by Context</div>
+      <div class="progress-row">
+        <div class="progress-label">
+          <span class="progress-name">Strategy & Planning</span>
+          <span class="progress-val">28%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:28%;background:var(--edelman-blue);"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">
+          <span class="progress-name">Content Creation</span>
+          <span class="progress-val">24%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:24%;background:var(--dark-navy);"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">
+          <span class="progress-name">Data Analysis</span>
+          <span class="progress-val">19%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:19%;background:var(--teal);"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">
+          <span class="progress-name">Coding & Technical</span>
+          <span class="progress-val">16%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:16%;background:var(--deep-blue);"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">
+          <span class="progress-name">Learning & Exploration</span>
+          <span class="progress-val">13%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:13%;background:var(--green);"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Skill Capability Heatmap</div>
+      <p style="font-size:0.8rem;color:var(--text-medium);margin-bottom:1rem;">Darker = higher mastery</p>
+      <div class="thermo-row">
+        <div class="thermo-label">Prompt Engineering</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:94%;background:#0E75FF;">94%</div></div>
+      </div>
+      <div class="thermo-row">
+        <div class="thermo-label">Custom Skills</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:88%;background:#04004E;">88%</div></div>
+      </div>
+      <div class="thermo-row">
+        <div class="thermo-label">Multi-Turn Reasoning</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:86%;background:#297980;">86%</div></div>
+      </div>
+      <div class="thermo-row">
+        <div class="thermo-label">Output Customization</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:92%;background:#003072;">92%</div></div>
+      </div>
+      <div class="thermo-row">
+        <div class="thermo-label">Creative Generation</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:84%;background:#2E7D32;">84%</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 5: THEMES & PATTERNS ========== -->
+<div id="tab-themes" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Themes & Patterns</h2>
+
+  <div class="card full-width">
+    <div class="card-title">Emerging Patterns in Session Titles</div>
+    <p style="color:var(--text-medium);font-size:0.9rem;margin-bottom:1.5rem;">Thematic clusters detected from session metadata</p>
+
+    <div class="grid-2">
+      <div>
+        <h3 style="font-size:0.95rem;color:var(--dark-navy);margin-bottom:1rem;font-weight:600;">Market & Strategy (32%)</h3>
+        <div class="accordion open">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            EMEA Market Segmentation
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">Geographic analysis, competitive positioning, market sizing, buyer personas</div>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            Use Case Development
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">Business case building, ROI estimation, implementation playbooks, success metrics</div>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            Competitive Intelligence
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">Competitor benchmarking, feature comparison, positioning analysis, pricing strategy</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:0.95rem;color:var(--dark-navy);margin-bottom:1rem;font-weight:600;">Content & Communication (28%)</h3>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            Thought Leadership
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">LinkedIn articles, opinion pieces, industry commentary, trend analysis</div>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            Presentation Creation
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">Pitch decks, board presentations, workshop slides, client proposals</div>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            Email & Newsletter
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">Newsletter content, client communications, internal updates, engagement strategies</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:2rem;">
+    <div class="card">
+      <div class="card-title">Peak Usage Times</div>
+      <div class="thermo-row">
+        <div class="thermo-label">9am-11am</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:88%;background:#0E75FF;">88%</div></div>
+      </div>
+      <div class="thermo-row">
+        <div class="thermo-label">2pm-4pm</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:76%;background:#04004E;">76%</div></div>
+      </div>
+      <div class="thermo-row">
+        <div class="thermo-label">Evening (after 6pm)</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:52%;background:#297980;">52%</div></div>
+      </div>
+      <div class="thermo-row">
+        <div class="thermo-label">Weekend</div>
+        <div class="thermo-track"><div class="thermo-fill" style="width:24%;background:#FF6B6B;">24%</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Adoption Velocity</div>
+      <div style="padding:1.5rem;text-align:center;">
+        <div style="font-size:0.9rem;color:var(--text-medium);margin-bottom:1rem;">Movement through adoption curve</div>
+        <div style="font-size:1.1rem;font-weight:600;color:var(--text-dark);margin-bottom:1.5rem;">From Enthusiast → Power User</div>
+        <div style="display:flex;justify-content:space-around;margin-bottom:1rem;">
+          <div style="text-align:center;">
+            <div style="font-size:2.2rem;font-family:'Glegoo',serif;color:var(--teal);">4w</div>
+            <div style="font-size:0.75rem;color:var(--text-medium);">Timeline</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:2.2rem;font-family:'Glegoo',serif;color:var(--green);">⬆️</div>
+            <div style="font-size:0.75rem;color:var(--text-medium);">Trajectory</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 6: ADOPTION SCORECARD ========== -->
+<div id="tab-scorecard" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Adoption Scorecard</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Overall Adoption Score</div>
+      <div class="giant-ring-wrap">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="90" fill="none" stroke="#EEEEEE" stroke-width="12" />
+          <circle cx="100" cy="100" r="90" fill="none" stroke="#0E75FF" stroke-width="12" stroke-dasharray="506.7" stroke-dashoffset="50" stroke-linecap="round" />
+          <text x="100" y="110" text-anchor="middle" font-size="48" font-weight="700" font-family="'Glegoo',serif" fill="#04004E">91</text>
+          <text x="100" y="135" text-anchor="middle" font-size="14" font-weight="500" fill="#808080">Power User</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Scorecard Dimensions</div>
+      <div style="padding:1rem 0;">
+        <div style="margin-bottom:1.25rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:0.5rem;">
+            <span style="font-weight:500;color:var(--text-dark);">Volume (Sessions)</span>
+            <span style="font-family:'Glegoo',serif;font-weight:700;color:var(--edelman-blue);">95/100</span>
+          </div>
+          <div style="height:8px;background:var(--bg-lighter);border-radius:4px;overflow:hidden;">
+            <div style="width:95%;height:100%;background:var(--edelman-blue);border-radius:4px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:1.25rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:0.5rem;">
+            <span style="font-weight:500;color:var(--text-dark);">Customization</span>
+            <span style="font-family:'Glegoo',serif;font-weight:700;color:var(--dark-navy);">98/100</span>
+          </div>
+          <div style="height:8px;background:var(--bg-lighter);border-radius:4px;overflow:hidden;">
+            <div style="width:98%;height:100%;background:var(--dark-navy);border-radius:4px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:1.25rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:0.5rem;">
+            <span style="font-weight:500;color:var(--text-dark);">Output Quality</span>
+            <span style="font-family:'Glegoo',serif;font-weight:700;color:var(--teal);">90/100</span>
+          </div>
+          <div style="height:8px;background:var(--bg-lighter);border-radius:4px;overflow:hidden;">
+            <div style="width:90%;height:100%;background:var(--teal);border-radius:4px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:1.25rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:0.5rem;">
+            <span style="font-weight:500;color:var(--text-dark);">Workflow Impact</span>
+            <span style="font-family:'Glegoo',serif;font-weight:700;color:var(--deep-blue);">88/100</span>
+          </div>
+          <div style="height:8px;background:var(--bg-lighter);border-radius:4px;overflow:hidden;">
+            <div style="width:88%;height:100%;background:var(--deep-blue);border-radius:4px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div class="card-title">Detailed Assessment Matrix</div>
+    <table style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border);">
+          <th style="text-align:left;padding:1rem;font-weight:600;color:var(--dark-navy);">Category</th>
+          <th style="text-align:left;padding:1rem;font-weight:600;color:var(--dark-navy);">Assessment</th>
+          <th style="text-align:left;padding:1rem;font-weight:600;color:var(--dark-navy);">Evidence</th>
+          <th style="text-align:right;padding:1rem;font-weight:600;color:var(--dark-navy);">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:1rem;">Frequency</td>
+          <td style="padding:1rem;color:var(--text-medium);">Near-daily usage across 4-week window</td>
+          <td style="padding:1rem;color:var(--text-medium);">98 sessions over month</td>
+          <td style="padding:1rem;text-align:right;font-weight:600;color:var(--green);">19/20</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:1rem;">Depth</td>
+          <td style="padding:1rem;color:var(--text-medium);">Multi-turn reasoning, complex prompts, iterative refinement</td>
+          <td style="padding:1rem;color:var(--text-medium);">Avg 30K tokens/session</td>
+          <td style="padding:1rem;text-align:right;font-weight:600;color:var(--green);">18/20</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:1rem;">Skill Building</td>
+          <td style="padding:1rem;color:var(--text-medium);">Created 12 unique custom skills and tools</td>
+          <td style="padding:1rem;color:var(--text-medium);">Full skill taxonomy with documentation</td>
+          <td style="padding:1rem;text-align:right;font-weight:600;color:var(--green);">20/20</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:1rem;">Strategic Alignment</td>
+          <td style="padding:1rem;color:var(--text-medium);">Adoption mapped to core business goals</td>
+          <td style="padding:1rem;color:var(--text-medium);">Market strategy + content programs</td>
+          <td style="padding:1rem;text-align:right;font-weight:600;color:var(--green);">18/20</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:1rem;">Knowledge Sharing</td>
+          <td style="padding:1rem;color:var(--text-medium);">Documented patterns, playbooks, and frameworks</td>
+          <td style="padding:1rem;color:var(--text-medium);">Skills library + weekly dashboard</td>
+          <td style="padding:1rem;text-align:right;font-weight:600;color:var(--green);">16/20</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 7: RECOMMENDATIONS ========== -->
+<div id="tab-recs" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Recommendations</h2>
+
+  <div class="grid-2" style="margin-bottom:2rem;">
+    <div>
+      <h3 style="font-size:1.1rem;color:var(--dark-navy);margin-bottom:1rem;font-weight:600;font-family:'DM Serif Display',serif;">High Priority (Immediate)</h3>
+      <div class="rec-card high">
+        <div class="rec-priority">High</div>
+        <div class="rec-title">Scale Content Automation</div>
+        <div class="rec-desc">Formalize the media content generator into a repeatable system: LinkedIn, Reddit, Substack pipelines. Potential reach: 50K+ combined audience.</div>
+      </div>
+      <div class="rec-card high" style="margin-top:1rem;">
+        <div class="rec-priority">High</div>
+        <div class="rec-title">Build Market Expansion Playbook</div>
+        <div class="rec-desc">Codify the EMEA segmentation approach for new markets. Create use-case-specific playbooks for Asia-Pacific, Americas launches.</div>
+      </div>
+      <div class="rec-card high" style="margin-top:1rem;">
+        <div class="rec-priority">High</div>
+        <div class="rec-title">Formalize Skill Architecture</div>
+        <div class="rec-desc">Document and version the 12 custom skills. Create integration layer for enterprise adoption. Build internal skills marketplace.</div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:1.1rem;color:var(--dark-navy);margin-bottom:1rem;font-weight:600;font-family:'DM Serif Display',serif;">Medium Priority (Next Sprint)</h3>
+      <div class="rec-card medium">
+        <div class="rec-priority">Medium</div>
+        <div class="rec-title">Implement Analytics Tracking</div>
+        <div class="rec-desc">Add structured logging for skill usage, content performance, and user journeys. Build feedback loop for continuous optimization.</div>
+      </div>
+      <div class="rec-card medium" style="margin-top:1rem;">
+        <div class="rec-priority">Medium</div>
+        <div class="rec-title">Team Training Program</div>
+        <div class="rec-desc">Develop certification program for team members to reach adoption level 4+. Create internal use-case champions network.</div>
+      </div>
+      <div class="rec-card medium" style="margin-top:1rem;">
+        <div class="rec-priority">Medium</div>
+        <div class="rec-title">Expand to Multimodal Use Cases</div>
+        <div class="rec-desc">Explore vision API integration for design feedback, market research image analysis. Test with 3 pilot projects.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rec-card quick">
+    <div class="rec-priority">Quick Win</div>
+    <div class="rec-title">Publish Adoption Methodology</div>
+    <div class="rec-desc">Share the 5-dimension DNA Radar and scorecard methodology as a thought leadership asset. Content: 1 whitepaper + 3 LinkedIn posts + webinar.</div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
+  <!-- END DASHBOARD CONTENT -->
+</div>
+
+<script>
+// ============ PASSWORD AUTHENTICATION ============
+
+// SHA-256 hash of "Adoption"
+const CORRECT_PASSWORD_HASH = "6a3ef33ac6240c4ca3d8057d11f4f91dcc4a66d18ee0e1d7fa2b9cca1e5e5098";
+
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+
+async function authenticate() {
+  const passwordInput = document.getElementById('password-input');
+  const password = passwordInput.value;
+  const errorMsg = document.getElementById('error-msg');
+
+  // Hash the input
+  const inputHash = await hashPassword(password);
+
+  if (inputHash === CORRECT_PASSWORD_HASH) {
+    // Success
+    errorMsg.classList.remove('show');
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('dashboard-container').classList.add('visible');
+
+    // Initialize charts after dashboard is visible
+    setTimeout(initializeCharts, 100);
+  } else {
+    // Failure
+    errorMsg.classList.add('show');
+    passwordInput.value = '';
+    passwordInput.focus();
+  }
+}
+
+function signOut() {
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('dashboard-container').classList.remove('visible');
+  document.getElementById('password-input').value = '';
+  document.getElementById('error-msg').classList.remove('show');
+  document.getElementById('password-input').focus();
+}
+
+// Allow Enter key to authenticate
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('password-input').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      authenticate();
+    }
+  });
+  document.getElementById('password-input').focus();
+});
+
+// ============ DASHBOARD FUNCTIONALITY ============
+
+function switchTab(tabName) {
+  // Hide all tabs
+  const tabs = document.querySelectorAll('.tab-content');
+  tabs.forEach(tab => tab.classList.remove('active'));
+
+  // Remove active class from all buttons
+  const buttons = document.querySelectorAll('.tab-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  // Show selected tab
+  document.getElementById('tab-' + tabName).classList.add('active');
+
+  // Add active class to button
+  event.target.classList.add('active');
+
+  // Reinitialize charts if they exist
+  setTimeout(initializeCharts, 100);
+}
+
+function toggleAccordion(header) {
+  const accordion = header.parentElement;
+  accordion.classList.toggle('open');
+}
+
+function toggleSkill(card) {
+  card.classList.toggle('open');
+}
+
+function initializeCheatmap() {
+  const heatmap = document.getElementById('heatmap');
+  if (!heatmap) return;
+
+  const data = [18, 24, 15, 22, 19, 8, 5];
+  const maxVal = Math.max(...data);
+  heatmap.innerHTML = '';
+
+  data.forEach(val => {
+    const cell = document.createElement('div');
+    cell.className = 'heatmap-cell';
+    const intensity = (val / maxVal) * 100;
+    const hue = 200;
+    const saturation = 75;
+    const lightness = 50 - (intensity / 2);
+    cell.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    cell.textContent = val;
+    heatmap.appendChild(cell);
+  });
+}
+
+let charts = {};
+
+function initializeCharts() {
+  // Heatmap
+  initializeCheatmap();
+
+  // Doughnut Chart
+  const doughnutCtx = document.getElementById('doughnutChart');
+  if (doughnutCtx && !charts.doughnut) {
+    if (charts.doughnut) charts.doughnut.destroy();
+    charts.doughnut = new Chart(doughnutCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Strategy & Planning', 'Content Creation', 'Data Analysis', 'Coding & Technical', 'Learning'],
+        datasets: [{
+          data: [28, 24, 19, 16, 13],
+          backgroundColor: ['#0E75FF', '#04004E', '#297980', '#003072', '#2E7D32'],
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { family: "'Inter', sans-serif", size: 12 }, padding: 15, usePointStyle: true }
+          }
+        }
+      }
+    });
+  }
+
+  // Radar Chart
+  const radarCtx = document.getElementById('radarChart');
+  if (radarCtx && !charts.radar) {
+    if (charts.radar) charts.radar.destroy();
+    charts.radar = new Chart(radarCtx, {
+      type: 'radar',
+      data: {
+        labels: ['Depth', 'Novelty', 'Automation', 'Reach', 'Adoption'],
+        datasets: [{
+          label: 'Capability Score',
+          data: [92, 78, 86, 88, 91],
+          borderColor: '#0E75FF',
+          backgroundColor: 'rgba(14, 117, 255, 0.1)',
+          borderWidth: 2,
+          pointBackgroundColor: '#0E75FF',
+          pointBorderColor: '#fff',
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            labels: { font: { family: "'Inter', sans-serif" } }
+          }
+        },
+        scales: {
+          r: {
+            max: 100,
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          }
+        }
+      }
+    });
+  }
+
+  // Channel Bar Chart
+  const channelCtx = document.getElementById('channelBar');
+  if (channelCtx && !charts.channel) {
+    if (charts.channel) charts.channel.destroy();
+    charts.channel = new Chart(channelCtx, {
+      type: 'bar',
+      data: {
+        labels: ['LinkedIn', 'Reddit', 'Substack', 'Internal Dashboard', 'Market Research'],
+        datasets: [{
+          label: 'Usage Sessions',
+          data: [24, 18, 16, 22, 18],
+          backgroundColor: '#0E75FF',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          },
+          y: {
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          }
+        }
+      }
+    });
+  }
+
+  // Token Efficiency
+  const tokenEfficiencyCtx = document.getElementById('tokenEfficiency');
+  if (tokenEfficiencyCtx && !charts.tokenEfficiency) {
+    if (charts.tokenEfficiency) charts.tokenEfficiency.destroy();
+    charts.tokenEfficiency = new Chart(tokenEfficiencyCtx, {
+      type: 'line',
+      data: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        datasets: [{
+          label: 'Avg Tokens/Session',
+          data: [28000, 31000, 29500, 30200],
+          borderColor: '#0E75FF',
+          backgroundColor: 'rgba(14, 117, 255, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: '#0E75FF',
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { labels: { font: { family: "'Inter', sans-serif" } } }
+        },
+        scales: {
+          y: {
+            ticks: { font: { family: "'Inter', sans-serif" } },
+            beginAtZero: true
+          },
+          x: {
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          }
+        }
+      }
+    });
+  }
+
+  // Token Distribution
+  const tokenDistCtx = document.getElementById('tokenDistribution');
+  if (tokenDistCtx && !charts.tokenDist) {
+    if (charts.tokenDist) charts.tokenDist.destroy();
+    charts.tokenDist = new Chart(tokenDistCtx, {
+      type: 'bar',
+      data: {
+        labels: ['<10K', '10-20K', '20-30K', '30-50K', '50-100K', '>100K'],
+        datasets: [{
+          label: 'Session Count',
+          data: [4, 12, 28, 35, 14, 5],
+          backgroundColor: '#04004E',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          },
+          x: {
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          }
+        }
+      }
+    });
+  }
+
+  // Token Heatmap
+  const tokenHeatmapCtx = document.getElementById('tokenHeatmap');
+  if (tokenHeatmapCtx && !charts.tokenHeatmap) {
+    if (charts.tokenHeatmap) charts.tokenHeatmap.destroy();
+    charts.tokenHeatmap = new Chart(tokenHeatmapCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+          {
+            label: 'Tokens Used',
+            data: [180000, 220000, 195000, 240000, 210000, 45000, 30000],
+            backgroundColor: '#0E75FF',
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { labels: { font: { family: "'Inter', sans-serif" } } }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          },
+          x: {
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          }
+        }
+      }
+    });
+  }
+
+  // Sessions Timeline
+  const sessionsTimelineCtx = document.getElementById('sessionsTimeline');
+  if (sessionsTimelineCtx && !charts.sessionsTimeline) {
+    if (charts.sessionsTimeline) charts.sessionsTimeline.destroy();
+    charts.sessionsTimeline = new Chart(sessionsTimelineCtx, {
+      type: 'line',
+      data: {
+        labels: ['Mar 3', 'Mar 10', 'Mar 17', 'Mar 24', 'Mar 31'],
+        datasets: [{
+          label: 'Sessions per Week',
+          data: [18, 24, 28, 21, 7],
+          borderColor: '#297980',
+          backgroundColor: 'rgba(41, 121, 128, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: '#297980',
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { labels: { font: { family: "'Inter', sans-serif" } } }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          },
+          x: {
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          }
+        }
+      }
+    });
+  }
+
+  // Duration Distribution
+  const durationDistCtx = document.getElementById('durationDist');
+  if (durationDistCtx && !charts.durationDist) {
+    if (charts.durationDist) charts.durationDist.destroy();
+    charts.durationDist = new Chart(durationDistCtx, {
+      type: 'bar',
+      data: {
+        labels: ['<5 min', '5-10 min', '10-20 min', '20-30 min', '>30 min'],
+        datasets: [{
+          label: 'Sessions',
+          data: [8, 16, 32, 28, 14],
+          backgroundColor: '#003072',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          },
+          x: {
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          }
+        }
+      }
+    });
+  }
+
+  // Use Case Bar
+  const useCaseBarCtx = document.getElementById('useCaseBar');
+  if (useCaseBarCtx && !charts.useCaseBar) {
+    if (charts.useCaseBar) charts.useCaseBar.destroy();
+    charts.useCaseBar = new Chart(useCaseBarCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Market Strategy', 'Content Creation', 'Data Analysis', 'Technical Code', 'Learning'],
+        datasets: [{
+          label: 'Sessions',
+          data: [28, 24, 19, 16, 11],
+          backgroundColor: '#0E75FF',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          },
+          y: {
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          }
+        }
+      }
+    });
+  }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  // Focus on password input
+  document.getElementById('password-input').focus();
+});
+</script>
+
+</body>
+</html>

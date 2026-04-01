@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Adoption Super Dashboard — Week of 30 Mar 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=Glegoo:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --edelman-blue: #0E75FF;
+  --dark-navy: #04004E;
+  --deep-blue: #003072;
+  --teal: #297980;
+  --text-primary: #0D0D0D;
+  --text-dark: #333333;
+  --text-medium: #555555;
+  --text-light: #808080;
+  --text-muted: #9A9B9C;
+  --bg-light: #F7F7F7;
+  --bg-lighter: #F4F4F4;
+  --bg-white: #FFFFFF;
+  --border: #E0E0E0;
+  --border-light: #EEEEEE;
+  --shadow: rgba(0,0,0,0.06);
+  --shadow-hover: rgba(0,0,0,0.12);
+  --green: #2E7D32;
+  --red: #C62828;
+  --amber: #F57F17;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--bg-light); color:var(--text-primary); line-height:1.6; }
+.container { max-width:1200px; margin:0 auto; padding:0 2rem; }
+
+/* Hero */
+.hero { background:linear-gradient(135deg,#04004E 0%,#003072 60%,#297980 100%); color:#fff; padding:3rem 0 2rem; position:relative; overflow:hidden; }
+.hero::after { content:''; position:absolute; top:-50%; right:-20%; width:600px; height:600px; background:radial-gradient(circle,rgba(14,117,255,0.15) 0%,transparent 70%); border-radius:50%; }
+.hero h1 { font-family:'DM Serif Display',serif; font-size:2.8rem; line-height:1.2; margin-bottom:0.5rem; position:relative; z-index:1; }
+.hero .subtitle { font-size:1.1rem; color:rgba(255,255,255,0.75); font-weight:300; position:relative; z-index:1; }
+.hero .date-badge { display:inline-block; background:rgba(14,117,255,0.3); border:1px solid rgba(14,117,255,0.5); border-radius:20px; padding:0.3rem 1rem; font-size:0.85rem; color:#fff; margin-top:0.75rem; position:relative; z-index:1; }
+
+/* Tabs */
+.tab-nav { background:#fff; border-bottom:2px solid var(--border-light); position:sticky; top:0; z-index:100; box-shadow:0 2px 8px var(--shadow); }
+.tab-nav .container { display:flex; gap:0; overflow-x:auto; }
+.tab-btn { padding:1rem 1.25rem; font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:500; color:var(--text-medium); background:none; border:none; cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; white-space:nowrap; }
+.tab-btn:hover { color:var(--text-dark); }
+.tab-btn.active { color:var(--edelman-blue); border-bottom-color:var(--edelman-blue); font-weight:600; }
+.tab-content { display:none; padding:2rem 0 3rem; }
+.tab-content.active { display:block; }
+
+/* Cards */
+.card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.5rem; transition:box-shadow 0.2s; }
+.card:hover { box-shadow:0 4px 20px var(--shadow-hover); }
+.card-title { font-family:'DM Serif Display',serif; font-size:1.25rem; color:var(--dark-navy); margin-bottom:1rem; }
+.section-title { font-family:'DM Serif Display',serif; font-size:1.75rem; color:var(--dark-navy); margin-bottom:1.5rem; }
+
+/* KPI Cards */
+.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-bottom:2rem; }
+.kpi-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.25rem; border-left:4px solid var(--edelman-blue); text-align:center; }
+.kpi-card:nth-child(2) { border-left-color:var(--dark-navy); }
+.kpi-card:nth-child(3) { border-left-color:var(--teal); }
+.kpi-card:nth-child(4) { border-left-color:var(--deep-blue); }
+.kpi-card:nth-child(5) { border-left-color:var(--green); }
+.kpi-value { font-family:'Glegoo',serif; font-weight:700; font-size:2.2rem; color:var(--dark-navy); line-height:1.2; }
+.kpi-label { font-size:0.8rem; color:var(--text-medium); margin-top:0.25rem; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; }
+.kpi-trend { font-size:0.75rem; margin-top:0.25rem; font-weight:600; }
+.kpi-trend.up { color:var(--green); }
+.kpi-trend.down { color:var(--red); }
+
+/* Grids */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+.grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+.full-width { margin-bottom:1.5rem; }
+
+/* Gauges */
+.gauge-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:2rem; }
+.gauge-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.5rem; text-align:center; }
+.gauge-label { font-size:0.85rem; font-weight:600; color:var(--text-medium); margin-top:0.75rem; text-transform:uppercase; letter-spacing:0.5px; }
+.gauge-score { font-family:'Glegoo',serif; font-weight:700; font-size:1.1rem; color:var(--dark-navy); }
+
+/* Heatmap */
+.heatmap { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:1.5rem; }
+.heatmap-cell { aspect-ratio:1; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600; color:#fff; }
+.heatmap-label { font-size:0.7rem; color:var(--text-muted); text-align:center; font-weight:500; }
+
+/* Progress bars */
+.progress-row { margin-bottom:1rem; }
+.progress-label { display:flex; justify-content:space-between; margin-bottom:0.4rem; font-size:0.85rem; }
+.progress-name { font-weight:500; color:var(--text-dark); }
+.progress-val { font-family:'Glegoo',serif; font-weight:700; color:var(--dark-navy); }
+.progress-bar { height:10px; background:var(--bg-lighter); border-radius:5px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:5px; transition:width 1s ease; }
+
+/* Thermometer */
+.thermo-row { display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; }
+.thermo-label { width:140px; font-size:0.8rem; font-weight:500; color:var(--text-dark); text-align:right; flex-shrink:0; }
+.thermo-track { flex:1; height:24px; background:var(--bg-lighter); border-radius:12px; overflow:hidden; position:relative; }
+.thermo-fill { height:100%; border-radius:12px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.7rem; font-weight:700; color:#fff; transition:width 1s ease; }
+
+/* Skill cards */
+.skill-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+.skill-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.25rem; border-top:3px solid var(--edelman-blue); cursor:pointer; transition:all 0.2s; }
+.skill-card:hover { box-shadow:0 4px 20px var(--shadow-hover); transform:translateY(-2px); }
+.skill-card .skill-name { font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--dark-navy); }
+.skill-card .skill-cat { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--edelman-blue); font-weight:600; margin-top:0.25rem; }
+.skill-card .skill-desc { font-size:0.8rem; color:var(--text-medium); margin-top:0.5rem; max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
+.skill-card.open .skill-desc { max-height:200px; }
+
+/* Accordion */
+.accordion { margin-bottom:0.75rem; border-radius:8px; overflow:hidden; box-shadow:0 1px 4px var(--shadow); }
+.accordion-header { padding:1rem 1.25rem; background:var(--bg-light); cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:500; font-size:0.9rem; }
+.accordion-header:hover { background:var(--bg-lighter); }
+.accordion-chevron { transition:transform 0.3s; font-size:0.8rem; color:var(--text-muted); }
+.accordion.open .accordion-chevron { transform:rotate(180deg); }
+.accordion.open .accordion-header { border-left:3px solid var(--edelman-blue); }
+.accordion-body { max-height:0; overflow:hidden; transition:max-height 0.3s ease; background:#fff; }
+.accordion.open .accordion-body { max-height:500px; }
+.accordion-body-inner { padding:1rem 1.25rem; font-size:0.85rem; color:var(--text-medium); }
+
+/* Tags */
+.tag { display:inline-block; padding:0.2rem 0.6rem; border-radius:12px; font-size:0.7rem; font-weight:600; margin:0.15rem; }
+.tag-geo { background:rgba(14,117,255,0.1); color:var(--edelman-blue); }
+.tag-linkedin { background:rgba(4,0,78,0.08); color:var(--dark-navy); }
+.tag-reddit { background:rgba(41,121,128,0.1); color:var(--teal); }
+.tag-social { background:rgba(0,48,114,0.08); color:var(--deep-blue); }
+.tag-substack { background:rgba(245,127,23,0.1); color:var(--amber); }
+.tag-strategy { background:rgba(46,125,50,0.1); color:var(--green); }
+.tag-slides { background:rgba(85,85,85,0.1); color:var(--text-medium); }
+.tag-dashboard { background:rgba(14,117,255,0.1); color:var(--edelman-blue); }
+.tag-skills { background:rgba(41,121,128,0.1); color:var(--teal); }
+.tag-media { background:rgba(0,48,114,0.08); color:var(--deep-blue); }
+
+/* Recommendation cards */
+.rec-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px var(--shadow); padding:1.25rem; position:relative; overflow:hidden; }
+.rec-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; }
+.rec-card.high::before { background:var(--edelman-blue); }
+.rec-card.medium::before { background:var(--teal); }
+.rec-card.quick::before { background:var(--green); }
+.rec-priority { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:0.25rem; }
+.rec-card.high .rec-priority { color:var(--edelman-blue); }
+.rec-card.medium .rec-priority { color:var(--teal); }
+.rec-card.quick .rec-priority { color:var(--green); }
+.rec-title { font-family:'DM Serif Display',serif; font-size:1.05rem; color:var(--dark-navy); margin-bottom:0.5rem; }
+.rec-desc { font-size:0.8rem; color:var(--text-medium); }
+
+/* Scatter plot */
+.scatter-grid { position:relative; width:100%; height:350px; background:var(--bg-lighter); border-radius:8px; border-left:2px solid var(--border); border-bottom:2px solid var(--border); }
+.scatter-dot { position:absolute; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:700; color:#fff; cursor:pointer; transition:transform 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
+.scatter-dot:hover { transform:scale(1.2); z-index:10; }
+.scatter-label { position:absolute; font-size:0.7rem; color:var(--text-muted); }
+
+/* Giant ring */
+.giant-ring-wrap { display:flex; align-items:center; justify-content:center; padding:2rem 0; }
+
+/* Responsive */
+@media(max-width:768px){
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .grid-2,.grid-3,.grid-4,.gauge-grid,.skill-grid { grid-template-columns:1fr; }
+  .hero h1 { font-size:2rem; }
+  .tab-btn { padding:0.75rem 0.8rem; font-size:0.75rem; }
+  .thermo-label { width:80px; font-size:0.7rem; }
+}
+
+/* Score ring animations */
+@keyframes ringFill { from { stroke-dashoffset:565; } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.animate-in { animation:fadeUp 0.5s ease forwards; }
+
+/* DNA Radar placeholder */
+.mini-stat { text-align:center; padding:1rem; }
+.mini-stat .val { font-family:'Glegoo',serif; font-weight:700; font-size:1.8rem; color:var(--dark-navy); }
+.mini-stat .lbl { font-size:0.75rem; color:var(--text-medium); text-transform:uppercase; letter-spacing:0.5px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+<div class="container">
+  <h1>Claude Adoption Super Dashboard</h1>
+  <p class="subtitle">Josh Turbill — Edelman Technology Practice</p>
+  <span class="date-badge">Week of 30 March 2026</span>
+</div>
+</section>
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+<div class="container">
+  <button class="tab-btn active" onclick="switchTab('command')">Command Centre</button>
+  <button class="tab-btn" onclick="switchTab('tokens')">Token Intelligence</button>
+  <button class="tab-btn" onclick="switchTab('skills')">Skill Armoury</button>
+  <button class="tab-btn" onclick="switchTab('usage')">Usage Deep-Dive</button>
+  <button class="tab-btn" onclick="switchTab('themes')">Themes &amp; Patterns</button>
+  <button class="tab-btn" onclick="switchTab('scorecard')">Adoption Scorecard</button>
+  <button class="tab-btn" onclick="switchTab('recs')">Recommendations</button>
+</div>
+</nav>
+
+<!-- ========== TAB 1: COMMAND CENTRE ========== -->
+<div id="tab-command" class="tab-content active">
+<div class="container">
+  <h2 class="section-title">Command Centre</h2>
+
+  <!-- KPI Row -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">98</div>
+      <div class="kpi-label">Total Sessions</div>
+      <div class="kpi-trend up">&#9650; Active growth</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">12</div>
+      <div class="kpi-label">Custom Skills</div>
+      <div class="kpi-trend up">&#9650; Fully built</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">2.94M</div>
+      <div class="kpi-label">Est. Total Tokens</div>
+      <div class="kpi-trend up">~30K avg/session</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">91</div>
+      <div class="kpi-label">Adoption Score</div>
+      <div class="kpi-trend up">&#9650; Power user</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">5</div>
+      <div class="kpi-label">Use Categories</div>
+      <div class="kpi-trend up">Full spectrum</div>
+    </div>
+  </div>
+
+  <!-- Gauges -->
+  <div class="gauge-grid">
+    <div class="gauge-card">
+      <svg width="120" height="70" viewBox="0 0 120 70">
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#EEEEEE" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#0E75FF" stroke-width="8" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="8"/>
+      </svg>
+      <div class="gauge-score">95/100</div>
+      <div class="gauge-label">Volume</div>
+    </div>
+    <div class="gauge-card">
+      <svg width="120" height="70" viewBox="0 0 120 70">
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#EEEEEE" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#04004E" stroke-width="8" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="3"/>
+      </svg>
+      <div class="gauge-score">98/100</div>
+      <div class="gauge-label">Customisation</div>
+    </div>
+    <div class="gauge-card">
+      <svg width="120" height="70" viewBox="0 0 120 70">
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#EEEEEE" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#297980" stroke-width="8" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="16"/>
+      </svg>
+      <div class="gauge-score">90/100</div>
+      <div class="gauge-label">Output Quality</div>
+    </div>
+    <div class="gauge-card">
+      <svg width="120" height="70" viewBox="0 0 120 70">
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#EEEEEE" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#003072" stroke-width="8" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="19"/>
+      </svg>
+      <div class="gauge-score">88/100</div>
+      <div class="gauge-label">Workflow</div>
+    </div>
+  </div>
+
+  <!-- Activity Heatmap & Doughnut -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Activity Heatmap (Last 7 Days)</div>
+      <div class="heatmap" id="heatmap"></div>
+      <div class="heatmap" style="margin-top:-4px;">
+        <div class="heatmap-label">Mon</div><div class="heatmap-label">Tue</div><div class="heatmap-label">Wed</div><div class="heatmap-label">Thu</div><div class="heatmap-label">Fri</div><div class="heatmap-label">Sat</div><div class="heatmap-label">Sun</div>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Intensity = estimated sessions per day based on session titles with dates</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Session Split by Category</div>
+      <canvas id="doughnutChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Radar & Bar -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Capability Radar</div>
+      <canvas id="radarChart" height="260"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Channel / Platform Usage</div>
+      <canvas id="channelBar" height="260"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 2: TOKEN INTELLIGENCE ========== -->
+<div id="tab-tokens" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Token Intelligence</h2>
+
+  <!-- Token KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">2.94M</div>
+      <div class="kpi-label">Total Tokens</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">1.76M</div>
+      <div class="kpi-label">Input (~60%)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">1.18M</div>
+      <div class="kpi-label">Output (~40%)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">30K</div>
+      <div class="kpi-label">Avg Per Session</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">98</div>
+      <div class="kpi-label">Sessions Analysed</div>
+    </div>
+  </div>
+
+  <!-- Full-width segmented meter -->
+  <div class="card full-width">
+    <div class="card-title">Token Distribution by Category</div>
+    <div style="display:flex;border-radius:8px;overflow:hidden;height:40px;margin:1rem 0;">
+      <div style="width:35.7%;background:#0E75FF;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:600;">Analysis 35.7%</div>
+      <div style="width:25.5%;background:#04004E;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:600;">Content 25.5%</div>
+      <div style="width:14.3%;background:#297980;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:600;">Dashboards 14.3%</div>
+      <div style="width:14.3%;background:#003072;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:600;">Skills 14.3%</div>
+      <div style="width:10.2%;background:#555;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;font-weight:600;">Other</div>
+    </div>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;font-size:0.8rem;color:var(--text-medium);">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#0E75FF;margin-right:4px;"></span>Analysis ~1.05M</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#04004E;margin-right:4px;"></span>Content ~750K</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#297980;margin-right:4px;"></span>Dashboards ~420K</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#003072;margin-right:4px;"></span>Skills ~420K</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#555;margin-right:4px;"></span>Other ~300K</span>
+    </div>
+  </div>
+
+  <!-- Token complexity bar -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Token Complexity by Type</div>
+      <canvas id="tokenComplexity" height="280"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Input vs Output by Category</div>
+      <canvas id="inputOutputStacked" height="280"></canvas>
+    </div>
+  </div>
+
+  <!-- Thermometers -->
+  <div class="card full-width">
+    <div class="card-title">Token Thermometer by Session Type</div>
+    <div style="padding:1rem 0;">
+      <div class="thermo-row"><div class="thermo-label">GEO Analysis</div><div class="thermo-track"><div class="thermo-fill" style="width:85%;background:linear-gradient(90deg,#0E75FF,#04004E);">~45K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">Dashboard Build</div><div class="thermo-track"><div class="thermo-fill" style="width:78%;background:linear-gradient(90deg,#297980,#003072);">~40K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">Slide Decks</div><div class="thermo-track"><div class="thermo-fill" style="width:72%;background:linear-gradient(90deg,#003072,#04004E);">~35K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">Strategy Docs</div><div class="thermo-track"><div class="thermo-fill" style="width:65%;background:linear-gradient(90deg,#0E75FF,#297980);">~32K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">Substack Posts</div><div class="thermo-track"><div class="thermo-fill" style="width:55%;background:linear-gradient(90deg,#F57F17,#FF9800);">~28K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">Skill Creation</div><div class="thermo-track"><div class="thermo-fill" style="width:50%;background:linear-gradient(90deg,#297980,#0E75FF);">~25K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">LinkedIn Audit</div><div class="thermo-track"><div class="thermo-fill" style="width:48%;background:linear-gradient(90deg,#04004E,#0E75FF);">~24K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">Reddit Research</div><div class="thermo-track"><div class="thermo-fill" style="width:42%;background:linear-gradient(90deg,#297980,#04004E);">~20K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">Persona Testing</div><div class="thermo-track"><div class="thermo-fill" style="width:35%;background:linear-gradient(90deg,#003072,#297980);">~18K</div></div></div>
+      <div class="thermo-row"><div class="thermo-label">Quick Tasks</div><div class="thermo-track"><div class="thermo-fill" style="width:18%;background:linear-gradient(90deg,#9A9B9C,#555);">~8K</div></div></div>
+    </div>
+  </div>
+
+  <!-- Efficiency Insights -->
+  <div class="card full-width">
+    <div class="card-title">Efficiency Insights</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;padding:0.5rem 0;">
+      <div class="mini-stat"><div class="val">60:40</div><div class="lbl">Input:Output Ratio</div><p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Healthy ratio — more context in, less verbose output</p></div>
+      <div class="mini-stat"><div class="val">45K</div><div class="lbl">Heaviest Session Type</div><p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">GEO analyses demand most tokens due to data richness</p></div>
+      <div class="mini-stat"><div class="val">8K</div><div class="lbl">Lightest Session Type</div><p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Quick utility tasks — timezone, punctuation, file ops</p></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 3: SKILL ARMOURY ========== -->
+<div id="tab-skills" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Skill Armoury</h2>
+  <p style="color:var(--text-medium);margin-bottom:1.5rem;">12 custom skills built and deployed. Click any card to expand.</p>
+
+  <div class="skill-grid">
+    <div class="skill-card" onclick="this.classList.toggle('open')">
+      <div class="skill-name">GEO Baseline Analysis</div>
+      <div class="skill-cat">Analysis</div>
+      <div class="skill-desc">Navigates the Profound platform to extract GEO/AEO data and produce interactive HTML dashboards with strategic recommendations across ChatGPT, Copilot, Perplexity, Google AI Overviews, Grok, and Meta AI.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:var(--teal);">
+      <div class="skill-name">Social Media Analyst</div>
+      <div class="skill-cat">Analysis</div>
+      <div class="skill-desc">Conducts comprehensive social media competitive analysis across LinkedIn, X, Facebook, Instagram, and TikTok for a brand plus two competitors, delivering strategic reports with whitespace opportunities.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:var(--dark-navy);">
+      <div class="skill-name">CIO Persona (Marcus Webb)</div>
+      <div class="skill-cat">Persona</div>
+      <div class="skill-desc">Stress-tests content through the eyes of a senior financial services CIO. Reviews vendor pitches, thought leadership, social posts, and memos for executive resonance and credibility.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:var(--deep-blue);">
+      <div class="skill-name">CISO Persona (Diane Koroma)</div>
+      <div class="skill-cat">Persona</div>
+      <div class="skill-desc">Evaluates content from a Chief Information Security Officer perspective — security product marketing, incident communications, board presentations, and cybersecurity thought leadership.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:#F57F17;">
+      <div class="skill-name">Substack Writer</div>
+      <div class="skill-cat">Content</div>
+      <div class="skill-desc">Drafts, brainstorms, and outlines Substack posts for The AI Marketeer. Handles full articles from rough ideas or bullet points into polished, publishable newsletter pieces.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')">
+      <div class="skill-name">Dashboard Builder</div>
+      <div class="skill-cat">Output</div>
+      <div class="skill-desc">Transforms reports, data, and content into beautiful interactive single-file HTML dashboards styled with Edelman brand guidelines. Supports charts, accordions, tabs, KPIs, and responsive design.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:var(--teal);">
+      <div class="skill-name">Skill Creator</div>
+      <div class="skill-cat">Meta</div>
+      <div class="skill-desc">Creates new skills from scratch, modifies and improves existing skills, runs evaluations to test skill performance, and benchmarks with variance analysis.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:var(--dark-navy);">
+      <div class="skill-name">Scheduler</div>
+      <div class="skill-cat">Automation</div>
+      <div class="skill-desc">Creates scheduled tasks that run on demand or automatically on intervals — like this very weekly adoption dashboard and the daily AI Voices trend reports.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:#555;">
+      <div class="skill-name">DOCX Handler</div>
+      <div class="skill-cat">Document</div>
+      <div class="skill-desc">Creates, reads, edits, and manipulates Word documents with professional formatting — tables of contents, headings, page numbers, letterheads, tracked changes.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:#555;">
+      <div class="skill-name">PPTX Handler</div>
+      <div class="skill-cat">Document</div>
+      <div class="skill-desc">Full PowerPoint support — creating, reading, editing, combining slide decks. Handles templates, layouts, speaker notes, and comments for any .pptx workflow.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:#555;">
+      <div class="skill-name">XLSX Handler</div>
+      <div class="skill-cat">Document</div>
+      <div class="skill-desc">Comprehensive Excel handling with formulas, formatting, data analysis, charting, and visualization. Supports .xlsx, .xlsm, .csv, and .tsv files.</div>
+    </div>
+    <div class="skill-card" onclick="this.classList.toggle('open')" style="border-top-color:#555;">
+      <div class="skill-name">PDF Handler</div>
+      <div class="skill-cat">Document</div>
+      <div class="skill-desc">Full PDF toolkit — extracting text/tables, merging, splitting, rotating, watermarks, form filling, encryption, OCR for scanned documents.</div>
+    </div>
+  </div>
+
+  <!-- Skill Charts -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Skill Category Distribution</div>
+      <canvas id="skillPolar" height="280"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Skill Maturity Levels</div>
+      <div style="padding:0.5rem 0;">
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">GEO Baseline</span><span class="progress-val">95%</span></div><div class="progress-bar"><div class="progress-fill" style="width:95%;background:var(--edelman-blue);"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">Dashboard Builder</span><span class="progress-val">95%</span></div><div class="progress-bar"><div class="progress-fill" style="width:95%;background:var(--edelman-blue);"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">CIO Persona</span><span class="progress-val">92%</span></div><div class="progress-bar"><div class="progress-fill" style="width:92%;background:var(--dark-navy);"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">Substack Writer</span><span class="progress-val">90%</span></div><div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--teal);"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">CISO Persona</span><span class="progress-val">88%</span></div><div class="progress-bar"><div class="progress-fill" style="width:88%;background:var(--deep-blue);"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">Social Analyst</span><span class="progress-val">85%</span></div><div class="progress-bar"><div class="progress-fill" style="width:85%;background:var(--teal);"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">Skill Creator</span><span class="progress-val">90%</span></div><div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--edelman-blue);"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">Scheduler</span><span class="progress-val">82%</span></div><div class="progress-bar"><div class="progress-fill" style="width:82%;background:var(--dark-navy);"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">DOCX Handler</span><span class="progress-val">80%</span></div><div class="progress-bar"><div class="progress-fill" style="width:80%;background:#555;"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">PPTX Handler</span><span class="progress-val">85%</span></div><div class="progress-bar"><div class="progress-fill" style="width:85%;background:#555;"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">XLSX Handler</span><span class="progress-val">78%</span></div><div class="progress-bar"><div class="progress-fill" style="width:78%;background:#555;"></div></div></div>
+        <div class="progress-row"><div class="progress-label"><span class="progress-name">PDF Handler</span><span class="progress-val">80%</span></div><div class="progress-bar"><div class="progress-fill" style="width:80%;background:#555;"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 4: USAGE DEEP-DIVE ========== -->
+<div id="tab-usage" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Usage Deep-Dive</h2>
+
+  <!-- Category KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-value">35</div><div class="kpi-label">Analysis & Research</div></div>
+    <div class="kpi-card"><div class="kpi-value">25</div><div class="kpi-label">Content Creation</div></div>
+    <div class="kpi-card"><div class="kpi-value">14</div><div class="kpi-label">Dashboards</div></div>
+    <div class="kpi-card"><div class="kpi-value">14</div><div class="kpi-label">Skills & Meta</div></div>
+    <div class="kpi-card"><div class="kpi-value">10</div><div class="kpi-label">Utility / Other</div></div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Sessions by Category</div>
+      <canvas id="usageHBar" height="260"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Sub-Category Breakdown</div>
+      <canvas id="subCatChart" height="260"></canvas>
+    </div>
+  </div>
+
+  <!-- Session Logs (Accordion) -->
+  <div class="card full-width" style="margin-top:1rem;">
+    <div class="card-title">Session Log</div>
+
+    <div class="accordion" onclick="this.classList.toggle('open')">
+      <div class="accordion-header">Analysis & Research (35 sessions) <span class="accordion-chevron">&#9660;</span></div>
+      <div class="accordion-body"><div class="accordion-body-inner">
+        <p><span class="tag tag-geo">GEO</span> Set up Samsung geo-audit baseline</p>
+        <p><span class="tag tag-geo">GEO</span> Palo Alto Networks audit and content strategy</p>
+        <p><span class="tag tag-geo">GEO</span> Palo Alto audit and CIO content strategy</p>
+        <p><span class="tag tag-geo">GEO</span> Conduct GEO baseline analysis in Profound</p>
+        <p><span class="tag tag-geo">GEO</span> Analyze baseline report for GEO opportunities</p>
+        <p><span class="tag tag-geo">GEO</span> Analyze HP partner visibility in AI citations</p>
+        <p><span class="tag tag-geo">GEO</span> Palo Alto Networks AI visibility analysis dashboard</p>
+        <p><span class="tag tag-geo">GEO</span> Northern Europe marketing visibility recommendations</p>
+        <p><span class="tag tag-geo">GEO</span> NetApp AI Answer Engine Performance Analysis</p>
+        <p><span class="tag tag-geo">GEO</span> Geo weekly briefing (27 Mar)</p>
+        <p><span class="tag tag-linkedin">LinkedIn</span> Optimize LinkedIn profile for impact</p>
+        <p><span class="tag tag-linkedin">LinkedIn</span> LinkedIn profile optimization and strategy audit</p>
+        <p><span class="tag tag-linkedin">LinkedIn</span> LinkedIn content audit visual summary</p>
+        <p><span class="tag tag-linkedin">LinkedIn</span> Create LinkedIn audit dashboard for Camilo</p>
+        <p><span class="tag tag-linkedin">LinkedIn</span> Build HP audit dashboard for team sharing</p>
+        <p><span class="tag tag-linkedin">LinkedIn</span> Build LinkedIn benchmark dashboard website</p>
+        <p><span class="tag tag-linkedin">LinkedIn</span> Create prompt for LinkedIn news analysis</p>
+        <p><span class="tag tag-linkedin">LinkedIn</span> LinkedIn content audit visual webpage</p>
+        <p><span class="tag tag-reddit">Reddit</span> Reddit brand engagement strategy</p>
+        <p><span class="tag tag-reddit">Reddit</span> Best laptop recommendations from Reddit</p>
+        <p><span class="tag tag-reddit">Reddit</span> Reddit marketing strategy and playbooks</p>
+        <p><span class="tag tag-social">Social</span> Social media analysis prompt for competitors</p>
+        <p><span class="tag tag-social">Social</span> Summarize campaign digital social performance</p>
+        <p><span class="tag tag-media">Media</span> Create reporter research and persona prompt</p>
+        <p><span class="tag tag-media">Media</span> Create reporter analysis browser extension prompt</p>
+        <p><span class="tag tag-media">Media</span> Identify prominent tech journalists</p>
+        <p><span class="tag tag-geo">Research</span> Map top technology Substacks competitive landscape</p>
+        <p><span class="tag tag-geo">Research</span> Research top tech Substack channels and trends</p>
+        <p><span class="tag tag-geo">Research</span> Find tech substacks for product promotion</p>
+        <p><span class="tag tag-geo">Research</span> AI prompts for vetting enterprise security vendors</p>
+        <p><span class="tag tag-geo">Research</span> Analyze content with CIO perspective</p>
+        <p><span class="tag tag-geo">Research</span> Get CIO perspective on HP subscription article</p>
+        <p><span class="tag tag-geo">Data</span> Reclassify citations data website categories</p>
+        <p><span class="tag tag-geo">Data</span> Analyze HP AI-PC data with OGSM framework</p>
+        <p><span class="tag tag-geo">Data</span> Extract AI-PC baseline recommendations table</p>
+      </div></div>
+    </div>
+
+    <div class="accordion" onclick="this.classList.toggle('open')">
+      <div class="accordion-header">Content Creation (25 sessions) <span class="accordion-chevron">&#9660;</span></div>
+      <div class="accordion-body"><div class="accordion-body-inner">
+        <p><span class="tag tag-substack">Substack</span> Draft new Substack article</p>
+        <p><span class="tag tag-substack">Substack</span> Substack's role in modern communications</p>
+        <p><span class="tag tag-substack">Substack</span> Mock up Substack article on AI visibility</p>
+        <p><span class="tag tag-substack">Substack</span> Create Substack research prompt for clients</p>
+        <p><span class="tag tag-strategy">Strategy</span> ChatGPT-6 Launch Earned Media Strategy</p>
+        <p><span class="tag tag-strategy">Strategy</span> SAP Sapphire agentic commerce creator strategy</p>
+        <p><span class="tag tag-strategy">Strategy</span> HP Microsite Plan and Project Proposal</p>
+        <p><span class="tag tag-strategy">Strategy</span> SAP CX Creator Plan for Sapphire 2026</p>
+        <p><span class="tag tag-strategy">Strategy</span> Create pre-launch content checklist</p>
+        <p><span class="tag tag-strategy">Strategy</span> Crisis impact planning and communications strategy</p>
+        <p><span class="tag tag-strategy">Strategy</span> Claude Workshop Agenda for Edelman Tech</p>
+        <p><span class="tag tag-slides">Slides</span> Create GEO program pricing slides</p>
+        <p><span class="tag tag-slides">Slides</span> GEO strategy deck for Europe</p>
+        <p><span class="tag tag-slides">Slides</span> Create Reddit strategy presentation slides (×3)</p>
+        <p><span class="tag tag-slides">Slides</span> Create Reddit marketing strategy presentation</p>
+        <p><span class="tag tag-slides">Slides</span> Create slide template from spreadsheet</p>
+        <p><span class="tag tag-strategy">Memo</span> Draft promotion memo for Camilo Lascano Tribin</p>
+        <p><span class="tag tag-strategy">Memo</span> Draft brief team absence announcement</p>
+        <p><span class="tag tag-strategy">Email</span> Convert GEO briefing to email and infographic</p>
+        <p><span class="tag tag-strategy">Content</span> Check punctuation in UK English post</p>
+        <p><span class="tag tag-strategy">Content</span> Create Reddit webinar for comms clients (×2)</p>
+        <p><span class="tag tag-strategy">Content</span> Create creator vetting process prompt</p>
+      </div></div>
+    </div>
+
+    <div class="accordion" onclick="this.classList.toggle('open')">
+      <div class="accordion-header">Dashboards & Visualisation (14 sessions) <span class="accordion-chevron">&#9660;</span></div>
+      <div class="accordion-body"><div class="accordion-body-inner">
+        <p><span class="tag tag-dashboard">Dashboard</span> Weekly adoption dashboard (26 Mar)</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Create personal skills dashboard with analysis</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Create skills process map dashboard</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Create interactive media intelligence dashboard</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Create media outreach strategy dashboard</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Create interactive dashboards with brand styling</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Create media intelligence dashboard</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Build Interactive Creator Vetting Dashboard</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Palo Alto Networks AI visibility analysis dashboard</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Build LinkedIn benchmark dashboard website</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Create LinkedIn audit dashboard for Camilo</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> Build HP audit dashboard for team sharing</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> LinkedIn content audit visual webpage</p>
+        <p><span class="tag tag-dashboard">Dashboard</span> LinkedIn content audit visual summary</p>
+      </div></div>
+    </div>
+
+    <div class="accordion" onclick="this.classList.toggle('open')">
+      <div class="accordion-header">Skill Building & Meta (14 sessions) <span class="accordion-chevron">&#9660;</span></div>
+      <div class="accordion-body"><div class="accordion-body-inner">
+        <p><span class="tag tag-skills">Workflow</span> Convert weekly AI report to daily</p>
+        <p><span class="tag tag-skills">Workflow</span> Recreate workflow in Cowork</p>
+        <p><span class="tag tag-skills">Workflow</span> Set up agentic product launch workflow</p>
+        <p><span class="tag tag-skills">Skills</span> Organize skills and use cases table</p>
+        <p><span class="tag tag-skills">Skills</span> Clone CIO persona to CISO security</p>
+        <p><span class="tag tag-skills">Skills</span> Rebuild vetting process as Claude skill</p>
+        <p><span class="tag tag-skills">Skills</span> Create Substack writing skill</p>
+        <p><span class="tag tag-skills">Skills</span> Update existing skill</p>
+        <p><span class="tag tag-skills">Skills</span> Export skills to another account</p>
+        <p><span class="tag tag-skills">Persona</span> Create skill personas for two bosses</p>
+        <p><span class="tag tag-skills">Persona</span> Create CIO persona for messaging testing</p>
+        <p><span class="tag tag-skills">Meta</span> Explore new Claude features</p>
+        <p><span class="tag tag-skills">Meta</span> Set up domain for dashboards</p>
+        <p><span class="tag tag-skills">Meta</span> Extract styles and colors from webpage</p>
+      </div></div>
+    </div>
+
+    <div class="accordion" onclick="this.classList.toggle('open')">
+      <div class="accordion-header">Automated & Utility (10 sessions) <span class="accordion-chevron">&#9660;</span></div>
+      <div class="accordion-body"><div class="accordion-body-inner">
+        <p><span class="tag tag-slides">Auto</span> Weekly AI Voices Trend Reports (×7 — daily runs)</p>
+        <p><span class="tag tag-slides">Utility</span> Organize and clean up Gmail inbox</p>
+        <p><span class="tag tag-slides">Utility</span> Time zone conversion reference</p>
+        <p><span class="tag tag-slides">Utility</span> Translate unclear text content</p>
+      </div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 5: THEMES & PATTERNS ========== -->
+<div id="tab-themes" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Themes &amp; Patterns</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Brand Focus</div>
+      <canvas id="brandDoughnut" height="260"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Platform Radar</div>
+      <canvas id="platformRadar" height="260"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Intent Distribution</div>
+      <canvas id="intentChart" height="260"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Output Type Breakdown</div>
+      <canvas id="outputTypeBar" height="260"></canvas>
+    </div>
+  </div>
+
+  <!-- Working Style DNA -->
+  <div class="card full-width">
+    <div class="card-title">Working Style DNA</div>
+    <div class="grid-2" style="margin-bottom:0;">
+      <div><canvas id="dnaRadar" height="300"></canvas></div>
+      <div style="padding:1rem;">
+        <h4 style="font-family:'DM Serif Display',serif;color:var(--dark-navy);margin-bottom:0.75rem;">Key Patterns</h4>
+        <div style="font-size:0.85rem;color:var(--text-medium);line-height:1.8;">
+          <p><strong style="color:var(--edelman-blue);">Analyst-Creator Hybrid:</strong> Josh splits almost equally between deep research and content production, making him a rare dual-threat user.</p>
+          <p><strong style="color:var(--teal);">Dashboard-First Deliverable:</strong> 14 dashboard sessions show a strong preference for interactive, visual outputs over static documents.</p>
+          <p><strong style="color:var(--deep-blue);">Skill Architect:</strong> 12 custom skills and 14 skill-building sessions demonstrate a "build once, use many" philosophy.</p>
+          <p><strong style="color:var(--dark-navy);">Multi-Client Operator:</strong> Work spans HP, Palo Alto Networks, SAP, NetApp, and Samsung — a true multi-account power user.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Theme Insight Cards -->
+  <div class="grid-3">
+    <div class="card" style="border-top:3px solid var(--edelman-blue);">
+      <div class="card-title">GEO Dominance</div>
+      <p style="font-size:0.85rem;color:var(--text-medium);">10+ GEO-specific sessions plus automated weekly briefings. AI search visibility is the #1 use case by volume and strategic importance.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--teal);">
+      <div class="card-title">Reddit Emerging</div>
+      <p style="font-size:0.85rem;color:var(--text-medium);">Reddit research and strategy sessions are growing — 3 dedicated research sessions plus 5+ slide deck and webinar creation sessions for Reddit content.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--dark-navy);">
+      <div class="card-title">Automation Flywheel</div>
+      <p style="font-size:0.85rem;color:var(--text-medium);">7 automated AI Voices trend reports + weekly dashboards + GEO briefings show a maturing automation practice that runs without manual intervention.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 6: ADOPTION SCORECARD ========== -->
+<div id="tab-scorecard" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Adoption Scorecard</h2>
+
+  <!-- Giant Ring -->
+  <div class="giant-ring-wrap">
+    <div style="position:relative;width:220px;height:220px;">
+      <svg width="220" height="220" viewBox="0 0 220 220">
+        <circle cx="110" cy="110" r="90" fill="none" stroke="#EEEEEE" stroke-width="14"/>
+        <circle cx="110" cy="110" r="90" fill="none" stroke="url(#scoreGrad)" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="565" stroke-dashoffset="51" transform="rotate(-90 110 110)"
+          style="animation:ringFill 1.5s ease forwards;"/>
+        <defs><linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0E75FF"/><stop offset="100%" stop-color="#297980"/></linearGradient></defs>
+      </svg>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+        <div style="font-family:'Glegoo',serif;font-weight:700;font-size:3.5rem;color:var(--dark-navy);line-height:1;">91</div>
+        <div style="font-size:0.85rem;color:var(--text-medium);font-weight:500;">Adoption Score</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 Dimension Cards -->
+  <div class="grid-3" style="margin-top:1rem;">
+    <div class="card" style="text-align:center;border-top:4px solid #0E75FF;">
+      <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;color:#0E75FF;">95</div>
+      <div style="font-weight:600;color:var(--text-dark);margin:0.25rem 0;">Volume</div>
+      <p style="font-size:0.8rem;color:var(--text-medium);">98 sessions across diverse workflows — well above power-user thresholds.</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:4px solid #04004E;">
+      <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;color:#04004E;">95</div>
+      <div style="font-weight:600;color:var(--text-dark);margin:0.25rem 0;">Breadth</div>
+      <p style="font-size:0.8rem;color:var(--text-medium);">5 distinct categories, 15+ sub-themes, and 5 client brands covered.</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:4px solid #297980;">
+      <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;color:#297980;">98</div>
+      <div style="font-weight:600;color:var(--text-dark);margin:0.25rem 0;">Customisation</div>
+      <p style="font-size:0.8rem;color:var(--text-medium);">12 custom skills including personas, workflows, and automated pipelines.</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:4px solid #003072;">
+      <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;color:#003072;">90</div>
+      <div style="font-weight:600;color:var(--text-dark);margin:0.25rem 0;">Output Quality</div>
+      <p style="font-size:0.8rem;color:var(--text-medium);">Dashboards, decks, and strategies are client-ready. Brand-styled outputs.</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:4px solid #0E75FF;">
+      <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;color:#0E75FF;">88</div>
+      <div style="font-weight:600;color:var(--text-dark);margin:0.25rem 0;">Workflow Integration</div>
+      <p style="font-size:0.8rem;color:var(--text-medium);">Scheduled tasks, Gmail integration, and multi-step pipelines in daily use.</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:4px solid #F57F17;">
+      <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;color:#F57F17;">82</div>
+      <div style="font-weight:600;color:var(--text-dark);margin:0.25rem 0;">Team Evangelism</div>
+      <p style="font-size:0.8rem;color:var(--text-medium);">Workshop agendas and LinkedIn audits for colleagues show growing team adoption.</p>
+    </div>
+  </div>
+
+  <!-- Radar: You vs Power User -->
+  <div class="grid-2" style="margin-top:1.5rem;">
+    <div class="card">
+      <div class="card-title">You vs. Power User Benchmark</div>
+      <canvas id="benchmarkRadar" height="300"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Adoption Maturity Curve</div>
+      <canvas id="maturityCurve" height="300"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== TAB 7: RECOMMENDATIONS ========== -->
+<div id="tab-recs" class="tab-content">
+<div class="container">
+  <h2 class="section-title">Recommendations</h2>
+
+  <!-- Scatter Matrix -->
+  <div class="card full-width">
+    <div class="card-title">Impact / Effort Matrix</div>
+    <div class="scatter-grid">
+      <div class="scatter-label" style="top:-20px;left:50%;transform:translateX(-50%);">HIGH IMPACT</div>
+      <div class="scatter-label" style="bottom:-20px;left:50%;transform:translateX(-50%);">LOW IMPACT</div>
+      <div class="scatter-label" style="left:-60px;top:50%;transform:translateY(-50%) rotate(-90deg);">LOW EFFORT</div>
+      <div class="scatter-label" style="right:-60px;top:50%;transform:translateY(-50%) rotate(90deg);">HIGH EFFORT</div>
+      <!-- Quick Wins (low effort, high impact) -->
+      <div class="scatter-dot" style="background:#2E7D32;left:15%;top:12%;" title="CMO Persona">CMO</div>
+      <div class="scatter-dot" style="background:#2E7D32;left:25%;top:18%;" title="Weekly GEO Alerts">GEO</div>
+      <!-- High Priority (medium-high effort, high impact) -->
+      <div class="scatter-dot" style="background:#0E75FF;left:55%;top:8%;" title="Scheduler Automation">Sch</div>
+      <div class="scatter-dot" style="background:#0E75FF;left:70%;top:15%;" title="MCP Integrations">MCP</div>
+      <div class="scatter-dot" style="background:#0E75FF;left:60%;top:22%;" title="Client Onboarding Skill">Cli</div>
+      <!-- Medium Priority -->
+      <div class="scatter-dot" style="background:#297980;left:40%;top:35%;" title="Comms Persona">Com</div>
+      <div class="scatter-dot" style="background:#297980;left:55%;top:42%;" title="LinkedIn Writer">LI</div>
+      <div class="scatter-dot" style="background:#297980;left:35%;top:48%;" title="Dashboard Templates">Tpl</div>
+    </div>
+    <div style="display:flex;gap:1.5rem;margin-top:1.5rem;font-size:0.8rem;flex-wrap:wrap;">
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#2E7D32;margin-right:4px;vertical-align:middle;"></span>Quick Wins</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#0E75FF;margin-right:4px;vertical-align:middle;"></span>High Priority</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#297980;margin-right:4px;vertical-align:middle;"></span>Medium Priority</span>
+    </div>
+  </div>
+
+  <!-- Recommendation Cards -->
+  <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--dark-navy);margin:2rem 0 1rem;">High Priority</h3>
+  <div class="grid-3">
+    <div class="rec-card high">
+      <div class="rec-priority">High Priority</div>
+      <div class="rec-title">Scheduler Automation Expansion</div>
+      <div class="rec-desc">Extend scheduled tasks beyond AI Voices and this dashboard. Add automated GEO competitor alerts, weekly client visibility digests, and social media trend monitors.</div>
+    </div>
+    <div class="rec-card high">
+      <div class="rec-priority">High Priority</div>
+      <div class="rec-title">MCP Integrations</div>
+      <div class="rec-desc">Connect Slack, Asana, or Teams MCPs to push insights directly into team channels. Reduce the "last mile" gap between Claude outputs and team consumption.</div>
+    </div>
+    <div class="rec-card high">
+      <div class="rec-priority">High Priority</div>
+      <div class="rec-title">Client Onboarding Skill</div>
+      <div class="rec-desc">Build a skill that automates new-client research — pulling GEO baselines, social audits, LinkedIn profiles, and competitive landscapes in a single workflow.</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--dark-navy);margin:2rem 0 1rem;">Medium Priority</h3>
+  <div class="grid-3">
+    <div class="rec-card medium">
+      <div class="rec-priority">Medium Priority</div>
+      <div class="rec-title">Comms Persona Skill</div>
+      <div class="rec-desc">Build a VP of Communications persona to stress-test media strategies, press releases, and earned media plans before client delivery.</div>
+    </div>
+    <div class="rec-card medium">
+      <div class="rec-priority">Medium Priority</div>
+      <div class="rec-title">LinkedIn Content Writer</div>
+      <div class="rec-desc">Extend the Substack Writer model to create a dedicated LinkedIn post writer skill optimised for engagement, hashtags, and executive voice.</div>
+    </div>
+    <div class="rec-card medium">
+      <div class="rec-priority">Medium Priority</div>
+      <div class="rec-title">Dashboard Template Library</div>
+      <div class="rec-desc">Pre-build 5–6 dashboard templates (GEO report, social audit, client review, campaign tracker) to reduce per-session build time.</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--dark-navy);margin:2rem 0 1rem;">Quick Wins</h3>
+  <div class="grid-3">
+    <div class="rec-card quick">
+      <div class="rec-priority">Quick Win</div>
+      <div class="rec-title">CMO Persona</div>
+      <div class="rec-desc">Clone the CIO/CISO persona pattern to create a CMO persona for reviewing marketing strategy content — a 30-minute build with high reuse value.</div>
+    </div>
+    <div class="rec-card quick">
+      <div class="rec-priority">Quick Win</div>
+      <div class="rec-title">Weekly GEO Alerts</div>
+      <div class="rec-desc">Set up a scheduled task that pulls GEO changes weekly for each active client and emails a summary digest — zero manual effort after setup.</div>
+    </div>
+    <div class="rec-card quick">
+      <div class="rec-priority">Quick Win</div>
+      <div class="rec-title">Email Template Skill</div>
+      <div class="rec-desc">Build a skill for common email templates — client updates, internal briefs, meeting follow-ups — pre-loaded with Edelman tone and formatting.</div>
+    </div>
+  </div>
+
+  <!-- Potential Impact -->
+  <div class="card full-width" style="margin-top:2rem;background:linear-gradient(135deg,#04004E 0%,#003072 100%);color:#fff;">
+    <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:1rem;">Potential Impact Summary</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;text-align:center;">
+      <div>
+        <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;">+15%</div>
+        <div style="font-size:0.85rem;opacity:0.8;">Efficiency Gain with Scheduler Expansion</div>
+      </div>
+      <div>
+        <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;">+20%</div>
+        <div style="font-size:0.85rem;opacity:0.8;">Team Adoption with MCP + Evangelism</div>
+      </div>
+      <div>
+        <div style="font-family:'Glegoo',serif;font-weight:700;font-size:2.5rem;">96+</div>
+        <div style="font-size:0.85rem;opacity:0.8;">Projected Adoption Score</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer style="text-align:center;padding:2rem;font-size:0.75rem;color:var(--text-muted);">
+  Generated automatically by Claude — Week of 30 March 2026 — Josh Turbill, Edelman Technology
+</footer>
+
+<script>
+// ====== TAB SWITCHING ======
+function switchTab(id){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  // Re-render charts if needed
+  initCharts();
+}
+
+// ====== HEATMAP ======
+(function(){
+  const data=[8,6,10,7,12,5,3]; // Mon-Sun estimated sessions
+  const colors=['#b3d4ff','#80b8ff','#0E75FF','#6aadff','#04004E','#a3c9ff','#d9e8ff'];
+  const map=document.getElementById('heatmap');
+  data.forEach((v,i)=>{
+    const cell=document.createElement('div');
+    const intensity=v/12;
+    const r=Math.round(14+(255-14)*(1-intensity));
+    const g=Math.round(117+(255-117)*(1-intensity));
+    const b=Math.round(255);
+    cell.className='heatmap-cell';
+    cell.style.background=`rgba(14,117,255,${0.15+intensity*0.85})`;
+    cell.textContent=v;
+    map.appendChild(cell);
+  });
+})();
+
+// ====== CHARTS ======
+const brandColors=['#0E75FF','#04004E','#297980','#003072','#555555','#9A9B9C'];
+let chartsInitialized={};
+
+function initCharts(){
+  // Doughnut - Session Split
+  if(!chartsInitialized.doughnut){
+    const ctx=document.getElementById('doughnutChart');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'doughnut',data:{labels:['Analysis & Research','Content Creation','Dashboards','Skills & Meta','Utility/Other'],datasets:[{data:[35,25,14,14,10],backgroundColor:brandColors.slice(0,5),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Inter',size:11},padding:12}}}}});
+      chartsInitialized.doughnut=true;
+    }
+  }
+
+  // Radar - Capability
+  if(!chartsInitialized.radar){
+    const ctx=document.getElementById('radarChart');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'radar',data:{labels:['GEO/AEO','Social Media','LinkedIn','Reddit','Content Strategy','Dashboards','Personas','Slides/Decks','Automation'],datasets:[{label:'Capability Level',data:[95,75,88,70,90,95,92,85,80],backgroundColor:'rgba(14,117,255,0.15)',borderColor:'#0E75FF',pointBackgroundColor:'#0E75FF',borderWidth:2}]},options:{responsive:true,scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:20,font:{family:'Inter',size:10}},grid:{color:'#EEEEEE'},pointLabels:{font:{family:'Inter',size:10}}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.radar=true;
+    }
+  }
+
+  // Channel Bar
+  if(!chartsInitialized.channel){
+    const ctx=document.getElementById('channelBar');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'bar',data:{labels:['Profound/GEO','LinkedIn','Reddit','Substack','Gmail','Canva','Chrome'],datasets:[{label:'Sessions',data:[10,8,8,6,2,1,3],backgroundColor:brandColors}]},options:{responsive:true,indexAxis:'y',scales:{x:{grid:{color:'#EEEEEE'},ticks:{font:{family:'Inter',size:11}}},y:{grid:{display:false},ticks:{font:{family:'Inter',size:11}}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.channel=true;
+    }
+  }
+
+  // Token Complexity
+  if(!chartsInitialized.tokenComp){
+    const ctx=document.getElementById('tokenComplexity');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'bar',data:{labels:['GEO Analysis','Dashboard Build','Slide Decks','Strategy Docs','Substack','Skill Creation','LinkedIn Audit','Reddit Research','Persona Test','Quick Tasks'],datasets:[{label:'Avg Tokens/Session',data:[45000,40000,35000,32000,28000,25000,24000,20000,18000,8000],backgroundColor:['#0E75FF','#297980','#003072','#04004E','#F57F17','#297980','#04004E','#297980','#003072','#9A9B9C']}]},options:{responsive:true,indexAxis:'y',scales:{x:{grid:{color:'#EEEEEE'},ticks:{font:{family:'Inter',size:10},callback:v=>(v/1000)+'K'}},y:{grid:{display:false},ticks:{font:{family:'Inter',size:10}}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.tokenComp=true;
+    }
+  }
+
+  // Input vs Output Stacked
+  if(!chartsInitialized.inputOutput){
+    const ctx=document.getElementById('inputOutputStacked');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'bar',data:{labels:['Analysis','Content','Dashboards','Skills','Other'],datasets:[{label:'Input Tokens',data:[630,450,252,252,180],backgroundColor:'#0E75FF'},{label:'Output Tokens',data:[420,300,168,168,120],backgroundColor:'#297980'}]},options:{responsive:true,scales:{x:{stacked:true,grid:{display:false},ticks:{font:{family:'Inter',size:11}}},y:{stacked:true,grid:{color:'#EEEEEE'},ticks:{font:{family:'Inter',size:10},callback:v=>(v/1000)+'K'}}},plugins:{legend:{position:'bottom',labels:{font:{family:'Inter',size:11}}}}}});
+      chartsInitialized.inputOutput=true;
+    }
+  }
+
+  // Skill Polar
+  if(!chartsInitialized.polar){
+    const ctx=document.getElementById('skillPolar');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'polarArea',data:{labels:['Analysis','Persona','Content','Output','Meta','Document','Automation'],datasets:[{data:[2,2,1,1,1,4,1],backgroundColor:['rgba(14,117,255,0.6)','rgba(4,0,78,0.6)','rgba(245,127,23,0.6)','rgba(41,121,128,0.6)','rgba(0,48,114,0.6)','rgba(85,85,85,0.4)','rgba(154,155,156,0.4)']}]},options:{responsive:true,scales:{r:{beginAtZero:true,ticks:{display:false}}},plugins:{legend:{position:'bottom',labels:{font:{family:'Inter',size:10}}}}}});
+      chartsInitialized.polar=true;
+    }
+  }
+
+  // Usage Horizontal Bar
+  if(!chartsInitialized.usageH){
+    const ctx=document.getElementById('usageHBar');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'bar',data:{labels:['Analysis & Research','Content Creation','Dashboards','Skills & Meta','Utility/Other'],datasets:[{label:'Sessions',data:[35,25,14,14,10],backgroundColor:brandColors.slice(0,5)}]},options:{responsive:true,indexAxis:'y',scales:{x:{grid:{color:'#EEEEEE'},ticks:{font:{family:'Inter',size:11}}},y:{grid:{display:false},ticks:{font:{family:'Inter',size:11}}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.usageH=true;
+    }
+  }
+
+  // Sub-category chart
+  if(!chartsInitialized.subCat){
+    const ctx=document.getElementById('subCatChart');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'bar',data:{labels:['GEO','LinkedIn','Strategy','Slides','Reddit','Substack','Dashboard','Skills','Media/PR','Social','Data','Auto Reports'],datasets:[{label:'Sessions',data:[10,8,7,7,3,4,14,9,3,2,3,7],backgroundColor:['#0E75FF','#04004E','#003072','#555','#297980','#F57F17','#0E75FF','#297980','#003072','#04004E','#9A9B9C','#555']}]},options:{responsive:true,scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:9},maxRotation:45}},y:{grid:{color:'#EEEEEE'},ticks:{font:{family:'Inter',size:11}}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.subCat=true;
+    }
+  }
+
+  // Brand Doughnut
+  if(!chartsInitialized.brand){
+    const ctx=document.getElementById('brandDoughnut');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'doughnut',data:{labels:['HP','Palo Alto Networks','SAP','NetApp','Samsung','General/Internal'],datasets:[{data:[12,8,4,2,2,70],backgroundColor:['#0E75FF','#04004E','#297980','#003072','#F57F17','#E0E0E0'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Inter',size:10},padding:10}}}}});
+      chartsInitialized.brand=true;
+    }
+  }
+
+  // Platform Radar
+  if(!chartsInitialized.platform){
+    const ctx=document.getElementById('platformRadar');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'radar',data:{labels:['Profound','LinkedIn','Reddit','Substack','Gmail','Chrome','Canva'],datasets:[{label:'Usage Intensity',data:[90,85,65,60,30,40,15],backgroundColor:'rgba(41,121,128,0.15)',borderColor:'#297980',pointBackgroundColor:'#297980',borderWidth:2}]},options:{responsive:true,scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:25,font:{family:'Inter',size:9}},grid:{color:'#EEEEEE'},pointLabels:{font:{family:'Inter',size:10}}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.platform=true;
+    }
+  }
+
+  // Intent Distribution
+  if(!chartsInitialized.intent){
+    const ctx=document.getElementById('intentChart');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'doughnut',data:{labels:['Analyse','Create','Visualise','Automate','Optimise','Explore'],datasets:[{data:[30,25,15,12,10,8],backgroundColor:['#0E75FF','#04004E','#297980','#003072','#F57F17','#9A9B9C'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Inter',size:10}}}}}});
+      chartsInitialized.intent=true;
+    }
+  }
+
+  // Output Type Bar
+  if(!chartsInitialized.outputType){
+    const ctx=document.getElementById('outputTypeBar');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'bar',data:{labels:['HTML Dashboards','PPTX Decks','Strategy Docs','Prompts/Skills','Emails/Memos','Data Tables','Substack Posts'],datasets:[{label:'Count',data:[14,7,7,12,5,3,4],backgroundColor:brandColors.concat(['#F57F17'])}]},options:{responsive:true,scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:9},maxRotation:45}},y:{grid:{color:'#EEEEEE'},ticks:{font:{family:'Inter',size:11}}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.outputType=true;
+    }
+  }
+
+  // DNA Radar
+  if(!chartsInitialized.dna){
+    const ctx=document.getElementById('dnaRadar');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'radar',data:{labels:['Research Depth','Content Volume','Visual Output','Automation','Customisation','Multi-Client','Speed','Creativity'],datasets:[{label:'Working Style',data:[92,88,95,80,98,85,82,78],backgroundColor:'rgba(14,117,255,0.12)',borderColor:'#0E75FF',pointBackgroundColor:'#0E75FF',borderWidth:2}]},options:{responsive:true,scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:25,font:{family:'Inter',size:9}},grid:{color:'#EEEEEE'},pointLabels:{font:{family:'Inter',size:10}}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.dna=true;
+    }
+  }
+
+  // Benchmark Radar
+  if(!chartsInitialized.benchmark){
+    const ctx=document.getElementById('benchmarkRadar');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'radar',data:{labels:['Volume','Breadth','Customisation','Output Quality','Workflow','Evangelism'],datasets:[{label:'Josh Turbill',data:[95,95,98,90,88,82],backgroundColor:'rgba(14,117,255,0.15)',borderColor:'#0E75FF',pointBackgroundColor:'#0E75FF',borderWidth:2},{label:'Power User Avg',data:[80,75,70,80,65,60],backgroundColor:'rgba(41,121,128,0.1)',borderColor:'#297980',pointBackgroundColor:'#297980',borderWidth:2,borderDash:[5,5]}]},options:{responsive:true,scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:25,font:{family:'Inter',size:9}},grid:{color:'#EEEEEE'},pointLabels:{font:{family:'Inter',size:10}}}},plugins:{legend:{position:'bottom',labels:{font:{family:'Inter',size:11}}}}}});
+      chartsInitialized.benchmark=true;
+    }
+  }
+
+  // Maturity Curve
+  if(!chartsInitialized.maturity){
+    const ctx=document.getElementById('maturityCurve');
+    if(ctx && ctx.getContext){
+      new Chart(ctx,{type:'line',data:{labels:['Awareness','Exploration','Adoption','Proficiency','Mastery','Evangelism'],datasets:[{label:'Maturity Progress',data:[100,100,100,95,91,82],borderColor:'#0E75FF',backgroundColor:'rgba(14,117,255,0.1)',fill:true,tension:0.4,pointRadius:6,pointBackgroundColor:['#2E7D32','#2E7D32','#2E7D32','#2E7D32','#0E75FF','#F57F17'],pointBorderColor:'#fff',pointBorderWidth:2}]},options:{responsive:true,scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:10}}},y:{min:0,max:100,grid:{color:'#EEEEEE'},ticks:{font:{family:'Inter',size:10},callback:v=>v+'%'}}},plugins:{legend:{display:false}}}});
+      chartsInitialized.maturity=true;
+    }
+  }
+}
+
+// Init on load
+initCharts();
+</script>
+</body>
+</html>
